@@ -160,7 +160,7 @@ class Gallery
 			{
 				$docSelect = '(';
 				foreach (explode(',', $this->config['docId']) as $docId)
-					$docSelect .= "content_id = '" . $docId . "' OR";
+					$docSelect .= "content_id = '" . $docId . "' OR ";
 				$docSelect = rtrim($docSelect, ' OR ') . ')';
 			}
 			else
