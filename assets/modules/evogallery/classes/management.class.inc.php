@@ -278,9 +278,11 @@ class GalleryManagement
 			}
 			elseif (isset($_POST['cmdsort']))  // Update image sort order
 			{
+				$sortnum = 0; 
 				foreach ($_POST['sort'] as $key => $filename)
 				{
-					$modx->db->update("sortorder='" . $key . "'", $modx->getFullTableName($this->galleriesTable), "filename='" . urldecode($filename) . "' AND content_id='" . $content_id . "'");
+					$sortnum++; 
+					$modx->db->update("sortorder='" . $sortnum . "'", $modx->getFullTableName($this->galleriesTable), "filename='" . urldecode($filename) . "' AND content_id='" . $content_id . "'");
 				}
 			}
 			elseif (isset($_GET['delete']))  // Delete requested image

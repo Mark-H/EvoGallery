@@ -58,9 +58,9 @@ if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
 	// Find the last order position
 	$rs = $modx->db->select('sortorder', $modx->getFullTableName('portfolio_galleries'), '', 'sortorder DESC', '1');
 	if ($modx->db->getRecordCount($rs) > 0)
-		$pos = $modx->db->getValue($rs);
+		$pos = $modx->db->getValue($rs) + 1;
 	else
-		$pos = 0;
+		$pos = 1; 
 
 	// Create record in the database
 	$fields = array(
