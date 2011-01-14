@@ -203,6 +203,10 @@ class Gallery
 				$item_phx = new PHxParser();
 				foreach ($row as $name => $value)
 					$item_phx->setPHxVariable($name, $value);
+				$imgsize = getimagesize($modx->config['base_path'] . $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']); 
+				$item_phx->setPHxVariable('width',$imgsize[0]); 
+				$item_phx->setPHxVariable('height',$imgsize[1]); 
+				$item_phx->setPHxVariable('image_withpath', $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']);
 				$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/');
 				$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/thumbs/');
 				if(!empty($item_tpl_first) && $count == 1){
