@@ -86,8 +86,8 @@ class Gallery
 
 		// Retrieve list of documents under the requested id
 		$filter = "published = '1' AND type = 'document' AND isfolder = '0' AND " . $docSelect . " hidemenu <= '" . $this->config['ignoreHidden'] . "'";
-		$result = $modx->db->select("id, pagetitle, longtitle, description, alias, pub_date, introtext, editedby, editedon, publishedon, publishedby, menutitle", $modx->getFullTableName('site_content'), $filter, $this->config['gallerySortBy'] . ' ' . $this->config['gallerySortDir']);
-        $recordCount = $modx->db->getRecordCount($result);
+		$result = $modx->db->select("id, pagetitle, longtitle, description, alias, pub_date, introtext, editedby, editedon, publishedon, publishedby, menutitle", $modx->getFullTableName('site_content'), $filter, $this->config['gallerySortBy'] . ' ' . $this->config['gallerySortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
+      $recordCount = $modx->db->getRecordCount($result);
 		if ($recordCount > 0)
 		{
 		    $count = 1;
