@@ -1,0 +1,16 @@
+EvoGallery
+
+Written by Brian Stanback
+jQuery rewrite and updates by Jeff Whitfield <jeff@collabpad.com>
+
+
+To Install:
+
+* Create a directory called 'galleries' in the assets directory of your MODx site and give it full write permissions (777).
+* Copy/Upload the assets/modules/evogallery directory to the assets/modules directory of your MODx site.
+* Copy/Upload the assets/snippets/evogallery directory to the assets/evosnippets directory of your MODx site.
+* (Optional) Copy/Upload the assets/plugins/managermanager/functions/gallerylink.inc.php file to the assets/plugins/managermanager/functions directory of your MODx site.
+* Copy/Upload the install directory to the root directory of your MODx site
+* Run the installer (http://yoursite/install/index.php) and follow the simple on-screen instructions to complete the installation.
+
+
