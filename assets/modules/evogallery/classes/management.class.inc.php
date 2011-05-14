@@ -321,6 +321,7 @@ class GalleryManagement
 			$upload_script = str_replace('[+base_url+]', $modx->config['base_url'], $upload_script);
 			$upload_script = str_replace('[+content_id+]', $content_id, $upload_script);
 			$upload_script = str_replace('[+thumbs+]', urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)), $upload_script);
+			$upload_script = str_replace('[+upload_maxsize+]', $modx->config['upload_maxsize'],$upload_script);
 			$tpl = str_replace('[+upload_script+]', $upload_script, $tpl);
 
 			// Read through project files directory and show thumbs

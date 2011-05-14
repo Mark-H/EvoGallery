@@ -11,7 +11,7 @@ $(document).ready(function(){
 		'fileDesc': 'Image Files',
 		'fileExt': '*.jpg;*.png;*.gif',
 		'simUploadLimit': 2,
-		'sizeLimit': 2097152,
+		'sizeLimit': [+upload_maxsize+],
 		'buttonText': 'Select Files',
 		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
 		'onComplete': function(event, queueID, fileObj, response, data) {
