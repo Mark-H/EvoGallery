@@ -79,7 +79,7 @@ $(document).ready(function(){
                 		'fileDesc': '[+lang.image_files+]',
                 		'fileExt': '*.jpg;*.png;*.gif',
                 		'simUploadLimit': 2,
-                		'sizeLimit': 2097152,
+                		'sizeLimit': [+upload_maxsize+],
 						'buttonText': '[+lang.browse_file+]',
                    		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
                 		'onComplete': function(event, queueID, fileObj, response, data) {
