@@ -23,10 +23,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+$path_to_modx_config = '../../../manager/includes/config.inc.php';
+
+include_once($path_to_modx_config);
+startCMSSession();
+
+include_once "../../../manager/includes/document.parser.class.inc.php";
+$modx = new DocumentParser;
+$modx->loadExtension("ManagerAPI");
+$modx->getSettings();
+
 $fileArray = array();
 foreach ($_POST as $key => $value) {
 	if ($key != 'folder') {
-		if (file_exists($_SERVER['DOCUMENT_ROOT'] . $_POST['folder'] . '/' . $value)) {
+		$target_fname = $value;
+		if($modx->config['clean_uploaded_filename']) {
+			$nameparts = explode('.', $target_fname);
+			$nameparts = array_map(array($modx, 'stripAlias'), $nameparts);
+			$target_fname = implode('.', $nameparts);
+		}
+		if (file_exists($_SERVER['DOCUMENT_ROOT'] . $_POST['folder'] . '/' . $target_fname)) {
 			$fileArray[$key] = $value;
 		}
 	}

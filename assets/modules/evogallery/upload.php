@@ -36,8 +36,15 @@ include_once('config.inc.php');
 if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
     $content_id = isset($_POST['content_id']) ? intval($_POST['content_id']) : $params['docId'];  // Get document id3_get_frame_long_name(string frameId)
     $target_dir = $params['savePath'] . '/' . $content_id . '/';
-	$target_file = $target_dir . $_FILES['Filedata']['name'];
-	$target_thumb = $target_dir . 'thumbs/' . $_FILES['Filedata']['name'];
+	$target_fname = $_FILES['Filedata']['name'];
+	if($modx->config['clean_uploaded_filename']) {
+		$nameparts = explode('.', $target_fname);
+		$nameparts = array_map(array($modx, 'stripAlias'), $nameparts);
+		$target_fname = implode('.', $nameparts);
+	}
+	
+	$target_file = $target_dir . $target_fname;
+	$target_thumb = $target_dir . 'thumbs/' . $target_fname;
 	
     // Check for existence of document/gallery directories
 	if (!file_exists($target_dir))
@@ -65,12 +72,13 @@ if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
 	// Create record in the database
 	$fields = array(
 		'content_id' => $content_id,
-		'filename' => $modx->db->escape($_FILES['Filedata']['name']),
+		'filename' => $modx->db->escape($target_fname),
 		'sortorder' => $pos
 	);
 	$modx->db->insert($fields, $modx->getFullTableName('portfolio_galleries'));
 	
-    echo "1";
+    //return new filename
+	echo $target_fname;
 }
 
 /**
