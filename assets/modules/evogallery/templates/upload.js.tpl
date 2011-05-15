@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script type="text/javascript" charset="utf-8">
 <!--
 $(document).ready(function(){
 	$("#uploadify").uploadify({
@@ -8,15 +8,15 @@ $(document).ready(function(){
 		'scriptData': {[+params+]},
 		'folder': '[+base_url+]assets/galleries/[+content_id+]',
 		'multi': true,
-		'fileDesc': 'Image Files',
+		'fileDesc': '[+lang.image_files+]',
 		'fileExt': '*.jpg;*.png;*.gif',
 		'simUploadLimit': 2,
 		'sizeLimit': [+upload_maxsize+],
-		'buttonText': 'Select Files',
+		'buttonText': '[+lang.select_files+]',
 		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
 		'onComplete': function(event, queueID, fileObj, response, data) {
             var uploadList = $('#uploadList');
-            uploadList.append("<li><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + escape(fileObj.name) + "\" class=\"edit\">Edit</a><a href=\"" + unescape('[+self+]') + "&delete=" + escape(fileObj.name) + "\" class=\"delete\">Delete</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(fileObj.name) + "\" alt=\"" + fileObj.name + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + escape(fileObj.name) + "\" /></li>");
+            uploadList.append("<li><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + escape(fileObj.name) + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + escape(fileObj.name) + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(fileObj.name) + "\" alt=\"" + fileObj.name + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + escape(fileObj.name) + "\" /></li>");
         },
         'onAllComplete': function(){
             $(".thbButtons").hide();
@@ -39,7 +39,7 @@ $(document).ready(function(){
                 $(this).find(".thbButtons").hide();
         });
         $(".thbButtons .delete").live("click", function(event){
-            if(confirm('Are you sure you want to delete this image?')){
+            if(confirm('[+lang.delete_confirm+]')){
                 $.get($(this).attr('href'));
                 $(this).parent().parent('li').remove();            
             }
@@ -76,10 +76,11 @@ $(document).ready(function(){
                 		'scriptData': {[+params+], 'edit': $.urlParam('edit')},
                 		'folder': '[+base_url+]assets/galleries/[+content_id+]',
                 		'multi': false,
-                		'fileDesc': 'Image Files',
+                		'fileDesc': '[+lang.image_files+]',
                 		'fileExt': '*.jpg;*.png;*.gif',
                 		'simUploadLimit': 2,
                 		'sizeLimit': 2097152,
+						'buttonText': '[+lang.browse_file+]',
                    		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
                 		'onComplete': function(event, queueID, fileObj, response, data) {
                             $('.thumbPreview').empty().append('<img class="newimage" src="' + unescape('[+thumbs+]') + '&filename=' + escape(fileObj.name) + '" alt="' + fileObj.name + '" />');

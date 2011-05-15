@@ -43,6 +43,8 @@ class GalleryManagement
 		$this->a = $_GET['a'];
 		$this->id = $_GET['id'];
 		$this->thumbHandler = '../assets/modules/evogallery/thumb_handler.php?';
+		
+		$this->loadLanguage();
 	}
 
 	/**
@@ -54,7 +56,6 @@ class GalleryManagement
 
 		$old_umask = umask(0);
 
-		$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $this->mainTemplate);
 
 		if (isset($_GET['edit']))
 		{
@@ -63,8 +64,11 @@ class GalleryManagement
 		else
 		{
 			$output = $this->viewListing();  // View/uplaod galleries and gallery images
-    		$tpl = str_replace('[+base_url+]', $modx->config['base_url'], $tpl);
-    		$tpl = str_replace('[+content+]', $output, $tpl);
+    		$tplparams = array(
+				'base_url' => $modx->config['base_url'],
+				'content' => $output
+			);
+			$tpl = $this->processTemplate($this->mainTemplate, $tplparams);
 		}
 
 
@@ -84,8 +88,6 @@ class GalleryManagement
 
 		$contentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
 		$filename = isset($_GET['edit']) ? $modx->db->escape(urldecode($_GET['edit'])) : '';
-
-		$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $this->editTemplate);
 
 		$result = $modx->db->select('id, title, description, keywords', $modx->getFullTableName($this->galleriesTable), "content_id = '" . $contentId . "' AND filename = '" . $filename . "'");
 		$info = $modx->fetchRow($result);
@@ -110,20 +112,24 @@ class GalleryManagement
 		$lis = '';
 		foreach($foundTags as $t=>$c) {
 		    if($t != ''){
-    			$lis .= '<li title="Used '.$c.' times">'.htmlentities($t, ENT_QUOTES, $modx->config['modx_charset'], false).($display_count?' ('.$c.')':'').'</li>';
+    			$lis .= '<li title="'.sprintf($this->lang['used_times'],$c).'">'.htmlentities($t, ENT_QUOTES, $modx->config['modx_charset'], false).($display_count?' ('.$c.')':'').'</li>';
 		    }
 		}
 
 		$keyword_tagList = '<ul class="mmTagList" id="keyword_tagList">'.$lis.'</ul>';
 
-		$tpl = str_replace('[+action+]', $this_page . '&action=view&content_id=' . $contentId, $tpl);
-		$tpl = str_replace('[+id+]', $info['id'], $tpl);
-		$tpl = str_replace('[+filename+]', $filename, $tpl);
-		$tpl = str_replace('[+image+]', $this->thumbHandler . "content_id=" . $contentId . "&filename=" . urlencode($filename), $tpl);
-		$tpl = str_replace('[+title+]', $info['title'], $tpl);
-		$tpl = str_replace('[+description+]', $info['description'], $tpl);
-		$tpl = str_replace('[+keywords+]', $info['keywords'], $tpl);
-		$tpl = str_replace('[+keyword_tagList+]', $keyword_tagList, $tpl);
+		$tplparams = array(
+			'action' => $this_page . '&action=view&content_id=' . $contentId,
+			'id' => $info['id'],
+			'filename' => $filename,
+			'image' => $this->thumbHandler . "content_id=" . $contentId . "&filename=" . urlencode($filename),
+			'title' => $info['title'],
+			'description' => $info['description'],
+			'keywords' => $info['keywords'],
+			'keyword_tagList' => $keyword_tagList
+		);
+				
+		$tpl = $this->processTemplate($this->editTemplate, $tplparams);
 
 		return $tpl;
 	}
@@ -137,7 +143,7 @@ class GalleryManagement
 
 		$this_page = $this->current . '?a=' . $this->a . '&id=' . $this->id;
 
-		$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $this->listingTemplate);
+		$tplparams = array();
 
 		$parentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
 
@@ -154,7 +160,7 @@ class GalleryManagement
 			$filter .= "c.content LIKE '%" . $search . "%' OR ";
 			$filter .= "c.alias LIKE '%" . $search . "%'";
 			$filter .= ")";
-			$header = $this->header('Search Results');
+			$header = $this->header($this->lang['search_results']);
 		}
 		else
 		{
@@ -197,7 +203,7 @@ class GalleryManagement
 			while ($row = $modx->db->getRow($ds))
 			{
 				$documents[] = array(
-					'pagetitle' => '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="Click to view/upload photos">' . $row['pagetitle'] . ' (' . $row['id'] . ')</a>',
+					'pagetitle' => '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="'.$this->lang['click_view_photos'].'">' . $row['pagetitle'] . ' (' . $row['id'] . ')</a>',
 					'longtitle' => ($row['longtitle'] != '') ? stripslashes($row['longtitle']) : '-',
 					'photos' => $row['photos'],
 					'editedon' => ($row['editedon'] > 0) ? strftime('%m-%d-%Y', $row['editedon']) : '-',
@@ -209,10 +215,10 @@ class GalleryManagement
 		{
 			// Create the table header definition with each header providing a link to sort by that field
 			$documentTableHeader = array(
-				'pagetitle' => $table->prepareOrderByLink('c.pagetitle', 'Title'),
-				'longtitle' => $table->prepareOrderByLink('c.longtitle', 'Long Title'),
-				'photos' => $table->prepareOrderByLink('photos', '# Photos'),
-				'editedon' => $table->prepareOrderByLink('c.editedon', 'Last Edited'),
+				'pagetitle' => $table->prepareOrderByLink('c.pagetitle', $this->lang['title']),
+				'longtitle' => $table->prepareOrderByLink('c.longtitle', $this->lang['long_title']),
+				'photos' => $table->prepareOrderByLink('photos', $this->lang['N_photos']),
+				'editedon' => $table->prepareOrderByLink('c.editedon', $this->lang['last_edited']),
 			);
 
 			$table->setActionFieldName('id');  // Field passed in link urls
@@ -232,20 +238,21 @@ class GalleryManagement
 		}
 		elseif (isset($_GET['query']))
 		{
-			$table_html = '<p>There are no documents matching your criteria.</p>';  // No records were found
+			$table_html = '<p>'.$this->lang['no_docs_found'].'</p>';  // No records were found
 		}
 		else
 		{
-			$table_html = '<p class="first">This document contains no children.</p>';
+			$table_html = '<p class="first">'.$this->lang['no_children'].'</p>';
 		}
 
-		$tpl = str_replace('[+table+]', $table_html, $tpl);
+		$tplparams['table'] =  $table_html;
 
 		if (isset($_GET['query']))
-			$tpl = str_replace('[+gallery+]', '', $tpl);
+			$tplparams['gallery'] = '';
 		else
-			$tpl = str_replace('[+gallery+]', $this->viewGallery(), $tpl);
-
+			$tplparams['gallery'] = $this->viewGallery();
+		
+		$tpl = $this->processTemplate($this->listingTemplate, $tplparams);
 		return $header . $tpl;
 	}
 
@@ -309,20 +316,25 @@ class GalleryManagement
 				$modx->db->update($fields, $modx->getFullTableName($this->galleriesTable), "id='" . intval($_POST['edit']) . "'");
 			}
 
-			$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $this->uploadTemplate);
-			$tpl = str_replace('[+title+]', stripslashes($info['pagetitle']), $tpl);
-
 			// Get contents of upload script and replace necessary action URL
-			$upload_script = file_get_contents($this->config['modulePath'] . 'templates/upload.js.tpl');
-			$upload_script = str_replace('[+self+]', urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)), $upload_script);
-			$upload_script = str_replace('[+action+]', $this->current, $upload_script);
-			$upload_script = str_replace('[+params+]', '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '", "action": "upload", "js": "1", "content_id": "' . $content_id . '"', $upload_script);
-			$upload_script = str_replace('[+base_path+]', $modx->config['base_url'] . 'assets/modules/evogallery/', $upload_script);
-			$upload_script = str_replace('[+base_url+]', $modx->config['base_url'], $upload_script);
-			$upload_script = str_replace('[+content_id+]', $content_id, $upload_script);
-			$upload_script = str_replace('[+thumbs+]', urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)), $upload_script);
-			$upload_script = str_replace('[+upload_maxsize+]', $modx->config['upload_maxsize'],$upload_script);
-			$tpl = str_replace('[+upload_script+]', $upload_script, $tpl);
+			$tplparams = array(
+				'self' => urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)),
+				'action' => $this->current,
+				'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '", "action": "upload", "js": "1", "content_id": "' . $content_id . '"',
+				'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
+				'base_url' => $modx->config['base_url'],
+				'content_id' => $content_id,
+				'thumbs' => urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)),
+				'upload_maxsize' => $modx->config['upload_maxsize']
+			);
+
+			$upload_script = $this->processTemplate('upload.js.tpl', $tplparams);
+
+			$tplparams = array(
+				'title' => stripslashes($info['pagetitle']),
+				'upload_script' => $upload_script
+			);
+
 
 			// Read through project files directory and show thumbs
 			$thumbs = '';
@@ -330,11 +342,13 @@ class GalleryManagement
 			while ($row = $modx->fetchRow($result))
 			{
 //				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" title=\"" . stripslashes($row['filename']) . "\" class=\"edit\" rel=\"moodalbox 420 375\">Edit</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" onclick=\"return Uploader.deleteConfirm()\" class=\"delete\">Delete</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
-				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" class=\"edit\">Edit</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" class=\"delete\">Delete</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
+				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
 			}
 
-			$tpl = str_replace('[+action+]', $this_page . '&action=view&content_id=' . $content_id, $tpl);
-			$tpl = str_replace('[+thumbs+]', $thumbs, $tpl);
+			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id;
+			$tplparams['thumbs'] = $thumbs;
+
+			$tpl = $this->processTemplate($this->uploadTemplate, $tplparams);
 
 			return $tpl;
 		}
@@ -351,33 +365,35 @@ class GalleryManagement
 
 		$parentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
 
-		$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $this->headerTemplate);
-
 		if (isset($_GET['query']))
-			$search = '<label for="query">Search:</label> <input type="text" name="query" id="query" value="' . $_GET['query'] . '" />';
+			$search = '<label for="query">'.$this->lang['search'].':</label> <input type="text" name="query" id="query" value="' . $_GET['query'] . '" />';
 		else
-			$search = '<label for="query">Search:</label> <input type="text" name="query" id="query" />';
+			$search = '<label for="query">'.$this->lang['search'].':</label> <input type="text" name="query" id="query" />';
 
 		// Generate breadcrumbs
 		$result = $modx->db->select('id, pagetitle, parent', $modx->getFullTableName('site_content'), 'id=' . $parentId);
 		$row = $modx->fetchRow($result);
-		$breadcrumbs = '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="Click to view products/categories">' . stripslashes($row['pagetitle']) . '</a>';
+		$breadcrumbs = '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="'.$this->lang['click_view_categories'].'">' . stripslashes($row['pagetitle']) . '</a>';
 		while ($row['id'] > $this->config['docId'])
 		{
 			$row = $modx->fetchRow($modx->db->select('id, pagetitle, parent', $modx->getFullTableName('site_content'), 'id=' . $row['parent']));
-			$breadcrumbs = '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="Click to view products/categories">' . stripslashes($row['pagetitle']) . '</a> &raquo; ' . $breadcrumbs;
+			$breadcrumbs = '<a href="' . $this_page . '&action=view&content_id=' . $row['id'] . '" title="'.$this->lang['click_view_categories'].'">' . stripslashes($row['pagetitle']) . '</a> &raquo; ' . $breadcrumbs;
 		}
 
-		$tpl = str_replace('[+breadcrumbs+]', $breadcrumbs, $tpl);
-		$tpl = str_replace('[+search+]', $search, $tpl);
-		$tpl = str_replace('[+action+]', $this_page, $tpl);
-		$tpl = str_replace('[+a+]', $this->a, $tpl);
-		$tpl = str_replace('[+id+]', $this->id, $tpl);
+		$tplparams = array(
+			'breadcrumbs' => $breadcrumbs,
+			'search' => $search,
+			'action' => $this_page,
+			'a' => $this->a,
+			'id' => $this->id
+		);
 
 		if ($title == '')
-			$tpl = str_replace('[+title+]', '', $tpl);
+			$tplparams['title'] = '';
 		else
-			$tpl = str_replace('[+title+]', '<h2>' . $title . '</h2>', $tpl);
+			$tplparams['title'] = '<h2>' . $title . '</h2>';
+
+		$tpl = $this->processTemplate($this->headerTemplate, $tplparams);
 
 		return $tpl;
 	}
@@ -464,7 +480,47 @@ class GalleryManagement
                 ")";
                 $modx->db->query($sql);
         }
-
-        
+		
+	/**
+	* Load language file
+	*/
+	function loadLanguage()
+	{
+		global $modx;
+		$langpath = $this->config['modulePath'].'lang/';
+		//First load english lang by defaule
+		$fname = $langpath.'english.inc.php';
+		if (file_exists($fname))
+		{
+			include($fname);
+		}
+		//And now load current lang file
+		$fname = $langpath.$modx->config['manager_language'].'.inc.php';
+		if (file_exists($fname))
+		{
+			include($fname);
+		}
+		$this->lang = $_lang;
+		unset($_lang);
+	}
+    
+	/**
+	* Replace placeholders in template
+	*/
+	function processTemplate($tplfile, $params)
+	{
+		$tpl = file_get_contents($this->config['modulePath'] . 'templates/' . $tplfile);
+		//Parse placeholders
+		foreach($params as $key=>$value)
+		{
+			$tpl = str_replace('[+'.$key.'+]', $value, $tpl);
+		}
+		//Parse lang placeholders
+		foreach ($this->lang as $key=>$value)
+		{
+			$tpl = str_replace('[+lang.'.$key.'+]', $value, $tpl);
+		}
+		return $tpl;
+	}
 }
 ?>
