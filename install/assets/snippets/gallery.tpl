@@ -52,7 +52,7 @@ $params['excludeDocs'] = isset($excludeDocs) ? $excludeDocs : 0;
 	// Prevent the specified documents from showing in the gallery listing
         // Multiple document id's can be specified by commas (no spaces)
 
-$params['sortBy'] = isset($sortBy) ? $sortBy : 'id';
+$params['sortBy'] = isset($sortBy) ? $sortBy : 'sortorder';
 	// Sort items by field (possible fields: id, content_id, filename, title, description, sortorder) or RAND()
 
 $params['sortDir'] = isset($sortDir) ? $sortDir : 'ASC';
