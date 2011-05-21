@@ -61,23 +61,23 @@ class Gallery
 		{
 			if (strpos($this->config['docId'], ',') !== false)
 			{
-				$docSelect = '(';
-				foreach (explode(',', $this->config['docId']) as $docId)
-					$docSelect .= "parent = '" . $docId . "' OR";
-				$docSelect = rtrim($docSelect, ' OR ') . ') AND ';
+				$docSelect = 'parent IN ('.explode(',', $this->config['docId']).')';
 			}
 			else
-				$docSelect = "parent = '" . $this->config['docId'] . "' AND ";
+				$docSelect = 'parent = ' . $this->config['docId'];
 		}
 		if ($this->config['excludeDocs'] > 0)
 		{
+			$excludeDocs = '';
 			if (strpos($this->config['excludeDocs'], ',') !== false)
 			{
-				foreach (explode(',', $this->config['excludeDocs']) as $docId)
-					$docSelect .= "parent != '" . $docId . "' AND ";
+				$excludeDocs = 'parent NOT IN ('.explode(',', $this->config['excludeDocs']).')';
 			}
 			else
-				$docSelect .= "parent != '" . $this->config['excludeDocs'] . "' AND ";
+				$excludeDocs .= 'parent != ' . $this->config['excludeDocs'];
+			if (!empty($docSelect))
+				$docSelect.= ' AND ';
+			$docSelect.= $excludeDocs;
 		}
 
 		$phx = new PHxParser();  // Instantiate PHx
@@ -85,7 +85,9 @@ class Gallery
 		$items = '';
 
 		// Retrieve list of documents under the requested id
-		$filter = "published = '1' AND type = 'document' AND " . $docSelect . " hidemenu <= '" . $this->config['ignoreHidden'] . "'";
+		$filter = "published = '1' AND type = 'document' AND hidemenu <= '" . $this->config['ignoreHidden'] . "'";
+		if (!empty($docSelect))
+			$filter.=' AND '.$docSelect;
 		$result = $modx->db->select("id, pagetitle, longtitle, description, alias, pub_date, introtext, editedby, editedon, publishedon, publishedby, menutitle", $modx->getFullTableName('site_content'), $filter, $this->config['gallerySortBy'] . ' ' . $this->config['gallerySortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
       $recordCount = $modx->db->getRecordCount($result);
 		if ($recordCount > 0)
@@ -159,42 +161,42 @@ class Gallery
 		{
 			if (strpos($this->config['docId'], ',') !== false)
 			{
-				$docSelect = '(';
-				foreach (explode(',', $this->config['docId']) as $docId)
-					$docSelect .= "content_id = '" . $docId . "' OR ";
-				$docSelect = rtrim($docSelect, ' OR ') . ')';
+				$docSelect = 'content_id IN ('.explode(',', $this->config['docId']).')';
 			}
 			else
-				$docSelect = "content_id = '" . $this->config['docId'] . "'";
+				$docSelect = 'content_id = ' . $this->config['docId'];
 		}
 		if ($this->config['excludeDocs'] > 0)
 		{
+			$excludeDocs = '';
 			if (strpos($this->config['excludeDocs'], ',') !== false)
 			{
-				foreach (explode(',', $this->config['excludeDocs']) as $docId)
-					$docSelect .= "content_id != '" . $docId . "' AND ";
-				$docSelect = rtrim($docSelect, ' AND ');
+				$excludeDocs = 'content_id NOT IN ('.explode(',', $this->config['excludeDocs']).')';
 			}
 			else
-				$docSelect .= "content_id != '" . $this->config['excludeDocs'] . "'";
+				$excludeDocs .= 'content_id != ' . $this->config['excludeDocs'];
+			if (!empty($docSelect))
+				$docSelect.= ' AND ';
+			$docSelect.= $excludeDocs;
 		}
+
 		if (!empty($this->config['tags']))
 		{
             $mode = (!empty($this->config['tagMode']) ? $this->config['tagMode'] : 'AND');
-            $tagSelect = '';
             foreach (explode(',', $this->config['tags']) as $tag) {
             	$tagSelect .= "keywords LIKE '%" . trim($tag) . "%' ".$mode." ";
             }
             $tagSelect = rtrim($tagSelect, ' '.$mode.' ');
-            $docSelect .= " AND (".$tagSelect.")";
+			if (!empty($docSelect))
+				$docSelect.=' AND ';
+            $docSelect .= "(".$tagSelect.")";
 		}
 
 		$phx = new PHxParser();  // Instantiate PHx
 
 		$items = '';
-
 		// Retrieve photos from the database table
-	    $result = $modx->db->select("*", $modx->getFullTableName($this->galleriesTable), $docSelect, $this->config['sortBy'] . ' ' . $this->config['sortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
+		$result = $modx->db->select("*", $modx->getFullTableName($this->galleriesTable), $docSelect, $this->config['sortBy'] . ' ' . $this->config['sortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
         $recordCount = $modx->db->getRecordCount($result);
 		if ($recordCount > 0)
 		{
