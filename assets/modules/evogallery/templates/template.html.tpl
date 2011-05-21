@@ -8,11 +8,11 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="[+base_url+]assets/modules/evogallery/js/uploadify/uploadify.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="[+base_url+]assets/modules/evogallery/js/overlay/overlay-minimal.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="[+base_url+]assets/modules/evogallery/js/tags/tags.css" />
-	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/jquery-1.3.2.min.js"></script>
-	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/jquery-ui.custom.min.js"></script>
+	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/jquery-ui-1.8.13.custom.min.js"></script>
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/tools.overlay.min.js"></script>
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/uploadify/swfobject.js"></script>
-	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/uploadify/jquery.uploadify.min.js"></script>
+	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/uploadify/jquery.uploadify.v2.1.4.min.js"></script>
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/tags/tags.js"></script>
 </head>
 <body>
