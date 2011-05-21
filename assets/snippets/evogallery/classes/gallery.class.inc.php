@@ -108,6 +108,7 @@ class Gallery
 						$item_phx->setPHxVariable($name, trim($value));
 					$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['id'] . '/');
 					$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['id'] . '/thumbs/');
+					$item_phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 
 					foreach ($row as $name => $value)
 						$item_phx->setPHxVariable($name, trim($value));
@@ -209,6 +210,7 @@ class Gallery
 				$item_phx->setPHxVariable('image_withpath', $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']);
 				$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/');
 				$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/thumbs/');
+				$item_phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 				if(!empty($item_tpl_first) && $count == 1){
     				$items .= $item_phx->Parse($item_tpl_first);
 				} else if(!empty($item_tpl_last) && $count == $recordCount){
@@ -259,6 +261,7 @@ class Gallery
 					$item_phx->setPHxVariable($name, $value);
 				$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/');
 				$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/thumbs/');
+				$item_phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 				$items .= $item_phx->Parse($item_tpl);
 			}
 		}
