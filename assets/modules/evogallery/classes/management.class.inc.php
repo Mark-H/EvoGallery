@@ -301,6 +301,8 @@ class GalleryManagement
 
 					if (file_exists($target_dir . 'thumbs/' . $filename))
 						unlink($target_dir . 'thumbs/' . $filename);
+					if (file_exists($target_dir . 'original/' . $filename))
+						unlink($target_dir . 'original/' . $filename);
 					if (file_exists($target_dir . $filename))
 						unlink($target_dir . $filename);
 
