@@ -545,6 +545,8 @@ class GalleryManagement
 			$content_id = isset($_POST['content_id']) ? intval($_POST['content_id']) : $params['docId'];  // Get document id3_get_frame_long_name(string frameId)
 			$target_dir = $modx->config['base_path'].$this->config['savePath'] . '/' . $content_id . '/';
 			$target_fname = $_FILES['Filedata']['name'];
+			$keepOriginal = $this->config['keepOriginal']=='Yes';
+			
 			if($modx->config['clean_uploaded_filename']) {
 				$nameparts = explode('.', $target_fname);
 				$nameparts = array_map(array($modx, 'stripAlias'), $nameparts);
@@ -553,6 +555,7 @@ class GalleryManagement
 			
 			$target_file = $target_dir . $target_fname;
 			$target_thumb = $target_dir . 'thumbs/' . $target_fname;
+			$target_original = $target_dir . 'original/' . $target_fname;
 			
 			// Check for existence of document/gallery directories
 			if (!file_exists($target_dir))
@@ -560,16 +563,21 @@ class GalleryManagement
 				$new_folder_permissions = octdec($modx->config['new_folder_permissions']);
 				mkdir($target_dir, $new_folder_permissions);
 				mkdir($target_dir . 'thumbs/', $new_folder_permissions);
+				if ($keepOriginal)
+					mkdir($target_dir . 'original/', $new_folder_permissions);
 			}
 
+			$movetofile = $keepOriginal?$target_original:$target_file;
 			// Copy uploaded image to final destination
-			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $target_file))
+			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $movetofile))
 			{
-				$this->resizeImage($target_file, $target_file, $this->config['imageSize'], $this->config['imageQuality']);  // Create and save main image
-				$this->resizeImage($target_file, $target_thumb, $this->config['thumbSize'], $this->config['thumbQuality']);  // Create and save thumb
+				$this->resizeImage($movetofile, $target_file, $this->config['imageSize'], $this->config['imageQuality']);  // Create and save main image
+				$this->resizeImage($movetofile, $target_thumb, $this->config['thumbSize'], $this->config['thumbQuality']);  // Create and save thumb
 				$new_file_permissions = octdec($modx->config['new_file_permissions']);
 				chmod($target_file, $new_file_permissions);
 				chmod($target_thumb, $new_file_permissions);
+				if ($keepOriginal)
+					chmod($target_original, $new_file_permissions);
 			}
 
 			if (isset($_POST['edit']))
@@ -581,6 +589,8 @@ class GalleryManagement
 				if($oldfilename !== $target_fname){
 					if (file_exists($target_dir . 'thumbs/' . $oldfilename))
 						unlink($target_dir . 'thumbs/' . $oldfilename);
+					if (file_exists($target_dir . 'original/' . $oldfilename))
+						unlink($target_dir . 'original/' . $oldfilename);
 					if (file_exists($target_dir . $oldfilename))
 						unlink($target_dir . $oldfilename);
 				}
