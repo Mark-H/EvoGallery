@@ -401,67 +401,32 @@ class GalleryManagement
 	/**
 	* Resize a given image
 	*/
-	function resizeImage($filename, $target, $target_size = 110, $target_quality = 76)
+	function resizeImage($filename, $target, $params)
 	{
-		$info = @getimagesize($filename);  // Determine whether file is an image using getimagesize()
-		if ($info)
+		if (!class_exists('phpthumb'))
 		{
-			if ($info[2] > 3)  // Use Imagemagick to convert other filetypes
+			include 'classes/phpthumb/phpthumb.class.php';
+			include 'classes/phpthumb/phpThumb.config.php';
+		}
+		
+		$phpthumb = new phpThumb();
+			
+		if (!empty($PHPTHUMB_CONFIG))
+		{
+			foreach ($PHPTHUMB_CONFIG as $key => $value)
 			{
-			/*
-				// SWF, PSD, BMP, TIFF (intel + motorola)
-				if ($info[2] == 4 || $info[2] == 5 || $info[2] == 6 || $info[2] == 7 || $info[2] == 8)
-				{
-					$cmd = $this->convert . " \"" . addslashes($filename) . "\" -quality $target_quality -quiet -resize $target_size" . "x" . "$target_size \"jpeg:" . addslashes($target) . "\"";
-					shell_exec($cmd);
-				}
-			*/
-			}
-			else  // Use the GD library to convert jpeg, gif, and png images
-			{
-				switch ($info[2])  // Check image type
-				{
-					case 1:
-						$img = @imagecreatefromgif($filename);
-						break;
-					case 2:
-						$img = @imagecreatefromjpeg($filename);
-						break;
-					case 3:
-						$img = @imagecreatefrompng($filename);
-						break;
-				}
-
-				if (!$img) return false;  // Incompatible type
-
-				$width = imageSX($img);
-				$height = imageSY($img);
-				if (!$width || !$height) return;  // Invalid width or height
-
-				$ratio = ($width / $height);
-
-				$new_height = $height;
-				$new_width = $width;
-				if ($new_height > $target_size)
-				{
-					$new_height = $target_size;
-					$new_width = ceil($new_height * $ratio);
-				}
-				if ($new_width > $target_size)
-				{
-					$new_width = $target_size;
-					$new_height = ceil($new_width / $ratio);
-				}
-
-				$new_img = imagecreatetruecolor($new_width, $new_height);
-				if (!@imagefilledrectangle($new_img, 0, 0, $new_width, $new_height, 0)) return false;  // Could not fill image
-				if (!@imagecopyresampled($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height)) return false;  // Could not resize image
-
-				imagejpeg($new_img, $target, $target_quality);  // Save resulting thumbnail
-				imagedestroy($new_img);
+				$keyname = 'config_'.$key;
+				$phpthumb->setParameter($keyname, $value);
 			}
 		}
-	}
+		foreach($params as $key=>$value)
+			$phpthumb->setParameter($key,$value);
+		$phpthumb->setSourceFilename($filename);
+		// generate & output thumbnail
+		if ($phpthumb->GenerateThumbnail())
+			$phpthumb->RenderToFile($target);
+		unset($phpthumb);
+	}		
 
 	/**
 	* Determine the number of days in a given month/year
@@ -479,7 +444,7 @@ class GalleryManagement
 			"`sortorder` tinyint(4) NOT NULL default '0'" .
                 ")";
                 $modx->db->query($sql);
-        }
+    }
 		
 	/**
 	* Load language file
@@ -525,8 +490,6 @@ class GalleryManagement
 	
 	function executeAction()
 	{
-		global $modx;
-		//file_put_contents($modx->config['base_path'].'1.txt',$_REQUEST['action']);
 		switch($_REQUEST['action'])
 		{
 			case 'upload':
@@ -535,11 +498,29 @@ class GalleryManagement
 		}
 	}
 	
+	function getPhpthumbConfig($params)
+	{
+		$params_arr = explode(',',$params);
+		$result = array();
+		$fltr = array();
+		foreach($params_arr as $param)
+		{
+			list($key,$value) = explode('#',$param);
+			if (strpos($key,'fltr')!==false)
+			{
+				$key = rtrim($key,'[]');
+				$fltr[] = $value;
+			} else
+				$result[$key] = $value;
+		}
+		if (sizeof($fltr))
+			$result['fltr'] = $fltr;
+		return $result;	
+	}
+	
 	function uploadFile()
 	{
 		global $modx;
-		
-		file_put_contents($modx->config['base_path'].'1.txt','123');
 		
 		if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
 			$content_id = isset($_POST['content_id']) ? intval($_POST['content_id']) : $params['docId'];  // Get document id3_get_frame_long_name(string frameId)
@@ -571,8 +552,10 @@ class GalleryManagement
 			// Copy uploaded image to final destination
 			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $movetofile))
 			{
-				$this->resizeImage($movetofile, $target_file, $this->config['imageSize'], $this->config['imageQuality']);  // Create and save main image
-				$this->resizeImage($movetofile, $target_thumb, $this->config['thumbSize'], $this->config['thumbQuality']);  // Create and save thumb
+				
+				$this->resizeImage($movetofile, $target_file, $this->getPhpthumbConfig($this->config['phpthumbImage']));  // Create and save main image
+				$this->resizeImage($movetofile, $target_thumb, $this->getPhpthumbConfig($this->config['phpthumbThumb']));  // Create and save thumb
+				
 				$new_file_permissions = octdec($modx->config['new_file_permissions']);
 				chmod($target_file, $new_file_permissions);
 				chmod($target_thumb, $new_file_permissions);
