@@ -522,5 +522,97 @@ class GalleryManagement
 		}
 		return $tpl;
 	}
+	
+	function executeAction()
+	{
+		global $modx;
+		//file_put_contents($modx->config['base_path'].'1.txt',$_REQUEST['action']);
+		switch($_REQUEST['action'])
+		{
+			case 'upload':
+				return $this->uploadFile();
+				break;
+		}
+	}
+	
+	function uploadFile()
+	{
+		global $modx;
+		
+		file_put_contents($modx->config['base_path'].'1.txt','123');
+		
+		if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
+			$content_id = isset($_POST['content_id']) ? intval($_POST['content_id']) : $params['docId'];  // Get document id3_get_frame_long_name(string frameId)
+			$target_dir = $modx->config['base_path'].$this->config['savePath'] . '/' . $content_id . '/';
+			$target_fname = $_FILES['Filedata']['name'];
+			if($modx->config['clean_uploaded_filename']) {
+				$nameparts = explode('.', $target_fname);
+				$nameparts = array_map(array($modx, 'stripAlias'), $nameparts);
+				$target_fname = implode('.', $nameparts);
+			}
+			
+			$target_file = $target_dir . $target_fname;
+			$target_thumb = $target_dir . 'thumbs/' . $target_fname;
+			
+			// Check for existence of document/gallery directories
+			if (!file_exists($target_dir))
+			{
+				$new_folder_permissions = octdec($modx->config['new_folder_permissions']);
+				mkdir($target_dir, $new_folder_permissions);
+				mkdir($target_dir . 'thumbs/', $new_folder_permissions);
+			}
+
+			// Copy uploaded image to final destination
+			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $target_file))
+			{
+				$this->resizeImage($target_file, $target_file, $this->config['imageSize'], $this->config['imageQuality']);  // Create and save main image
+				$this->resizeImage($target_file, $target_thumb, $this->config['thumbSize'], $this->config['thumbQuality']);  // Create and save thumb
+				$new_file_permissions = octdec($modx->config['new_file_permissions']);
+				chmod($target_file, $new_file_permissions);
+				chmod($target_thumb, $new_file_permissions);
+			}
+
+			if (isset($_POST['edit']))
+			{
+				// Replace mode
+				
+				// Delete existing image
+				$oldfilename = urldecode($_POST['edit']);
+				if($oldfilename !== $target_fname){
+					if (file_exists($target_dir . 'thumbs/' . $oldfilename))
+						unlink($target_dir . 'thumbs/' . $oldfilename);
+					if (file_exists($target_dir . $oldfilename))
+						unlink($target_dir . $oldfilename);
+				}
+				
+				// Update record in the database
+				$fields = array(
+					'filename' => $modx->db->escape($target_fname)
+				);
+				$modx->db->update($fields, $modx->getFullTableName('portfolio_galleries'), "filename='".$oldfilename."' AND content_id='" . $content_id . "'");
+				
+			} else
+			{
+				// Find the last order position
+				$rs = $modx->db->select('sortorder', $modx->getFullTableName('portfolio_galleries'), '', 'sortorder DESC', '1');
+				if ($modx->db->getRecordCount($rs) > 0)
+					$pos = $modx->db->getValue($rs) + 1;
+				else
+					$pos = 1; 
+
+				// Create record in the database
+				$fields = array(
+					'content_id' => $content_id,
+					'filename' => $modx->db->escape($target_fname),
+					'sortorder' => $pos
+				);
+				$modx->db->insert($fields, $modx->getFullTableName('portfolio_galleries'));
+			}
+			
+			//return new filename
+			echo $target_fname;
+		}
+		
+	}
 }
 ?>

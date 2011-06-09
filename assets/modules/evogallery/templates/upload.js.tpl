@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	$("#uploadify").uploadify({
 		'uploader': '[+base_path+]js/uploadify/uploadify.swf',
-		'script': '[+base_path+]upload.php',
+		'script': '[+base_path+]action.php',
 		'checkScript': '[+base_path+]check.php',
 		'scriptData': {[+params+]},
 		'folder': '[+base_url+]assets/galleries/[+content_id+]',
@@ -71,7 +71,7 @@ $(document).ready(function(){
                     }
                 	$("#newimage").uploadify({
                 		'uploader': '[+base_path+]js/uploadify/uploadify.swf',
-                		'script': '[+base_path+]replace.php',
+                		'script': '[+base_path+]action.php',
                 		'checkScript': '[+base_path+]check.php',
                 		'scriptData': {[+params+], 'edit': $.urlParam('edit')},
                 		'folder': '[+base_url+]assets/galleries/[+content_id+]',

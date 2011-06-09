@@ -7,7 +7,7 @@
  * @category	module
  * @version 	1.0 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
- * @internal	@properties	&docId=Root Document ID;integer;0
+ * @internal	@properties	&docId=Root Document ID;integer;0 &imageSize=Image size;int;940 &imageQuality=Image quality;int;85 &thumbSize=Thumb size;int;175 &thumbQuality=Thumb quality;int;75 &savePath=Save path;str;assets/galleries
  * @internal	@guid 	
  * @internal	@shareparams 1
  * @internal	@dependencies requires files located at /assets/modules/evogallery/
