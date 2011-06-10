@@ -7,7 +7,7 @@
  * @category	module
  * @version 	1.0 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
- * @internal	@properties	&docId=Root Document ID;integer;0 &phpthumbImage=PHPThumb config for images in JSON;textarea;{'w': 940, 'q': 95} &phpthumbThumb=PHPThumb config for thumbs in JSON;textarea;{'w': 175, 'q': 75} &savePath=Save path;string;assets/galleries &keepOriginal=Keep original images;menu;Yes,No
+ * @internal	@properties	&docId=Root Document ID;integer;0 &phpthumbImage=PHPThumb config for images in JSON;textarea;{'w': 940, 'h': 940, 'q': 95} &phpthumbThumb=PHPThumb config for thumbs in JSON;textarea;{'w': 175, 'h': 175, 'q': 75} &savePath=Save path;string;assets/galleries &keepOriginal=Keep original images;list;Yes,No;Yes
  * @internal	@guid 	
  * @internal	@shareparams 1
  * @internal	@dependencies requires files located at /assets/modules/evogallery/
