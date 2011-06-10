@@ -30,6 +30,7 @@ class GalleryManagement
 		global $modx;
 
 		$this->config = $params;
+		$this->config['savePath'] = $modx->config['base_path'].rtrim($this->config['savePath'],'/');
 
 		$this->mainTemplate = 'template.html.tpl';
 		$this->headerTemplate = 'header.html.tpl';
@@ -515,7 +516,7 @@ class GalleryManagement
 		
 		if (is_uploaded_file($_FILES['Filedata']['tmp_name'])){
 			$content_id = isset($_POST['content_id']) ? intval($_POST['content_id']) : $params['docId'];  // Get document id3_get_frame_long_name(string frameId)
-			$target_dir = $modx->config['base_path'].$this->config['savePath'] . '/' . $content_id . '/';
+			$target_dir = $this->config['savePath'] . '/' . $content_id . '/';
 			$target_fname = $_FILES['Filedata']['name'];
 			$keepOriginal = $this->config['keepOriginal']=='Yes';
 			
