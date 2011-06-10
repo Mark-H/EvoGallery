@@ -406,6 +406,8 @@ class GalleryManagement
 	*/
 	function resizeImage($filename, $target, $params)
 	{
+		global $modx;
+		
 		if (!class_exists('phpthumb'))
 		{
 			include 'classes/phpthumb/phpthumb.class.php';
@@ -422,6 +424,7 @@ class GalleryManagement
 				$phpthumb->setParameter($keyname, $value);
 			}
 		}
+		$phpthumb->setParameter('config_document_root', rtrim($modx->config['base_path'],'/'));
 		foreach($params as $key=>$value)
 			$phpthumb->setParameter($key,$value);
 		$phpthumb->setSourceFilename($filename);
@@ -536,7 +539,7 @@ class GalleryManagement
 					mkdir($target_dir . 'original/', $new_folder_permissions);
 			}
 
-			$movetofile = $keepOriginal?$target_original:$target_file;
+			$movetofile = $keepOriginal?$target_original:$target_dir.uniqid();
 			// Copy uploaded image to final destination
 			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $movetofile))
 			{
@@ -549,6 +552,8 @@ class GalleryManagement
 				chmod($target_thumb, $new_file_permissions);
 				if ($keepOriginal)
 					chmod($target_original, $new_file_permissions);
+				else
+					unlink($movetofile);
 			}
 
 			if (isset($_POST['edit']))
