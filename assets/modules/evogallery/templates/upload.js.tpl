@@ -16,7 +16,8 @@ $(document).ready(function(){
 		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
 		'onComplete': function(event, queueID, fileObj, response, data) {
             var uploadList = $('#uploadList');
-            uploadList.append("<li><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + escape(response) + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + escape(response) + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(response) + "\" alt=\"" + response + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + escape(response) + "\" /></li>");
+            var info = eval('(' + response + ')');
+            uploadList.append("<li><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
         },
         'onAllComplete': function(){
             $(".thbButtons").hide();
@@ -83,7 +84,8 @@ $(document).ready(function(){
 						'buttonText': '[+lang.browse_file+]',
                    		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
                 		'onComplete': function(event, queueID, fileObj, response, data) {
-                            $('.thumbPreview').empty().append('<img class="newimage" src="' + unescape('[+thumbs+]') + '&filename=' + escape(response) + '" alt="' + response + '" />');
+							var info = eval('(' + response + ')');
+                            $('.thumbPreview').empty().append('<img class="newimage" src="' + unescape('[+thumbs+]') + '&filename=' + escape(info['filename']) + '" alt="' + info['filename'] + '" />');
 
                         }
                	    });

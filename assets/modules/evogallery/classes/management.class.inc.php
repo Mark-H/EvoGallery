@@ -87,9 +87,9 @@ class GalleryManagement
 		$this_page = $this->current . '?a=' . $this->a . '&amp;id=' . $this->id;
 
 		$contentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
-		$filename = isset($_GET['edit']) ? $modx->db->escape(urldecode($_GET['edit'])) : '';
+		$id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
 
-		$result = $modx->db->select('id, title, description, keywords', $modx->getFullTableName($this->galleriesTable), "content_id = '" . $contentId . "' AND filename = '" . $filename . "'");
+		$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), "id = '" . $id . "'");
 		$info = $modx->fetchRow($result);
 
         /* Get keyword tags */
@@ -121,8 +121,8 @@ class GalleryManagement
 		$tplparams = array(
 			'action' => $this_page . '&action=view&content_id=' . $contentId,
 			'id' => $info['id'],
-			'filename' => $filename,
-			'image' => $this->thumbHandler . "content_id=" . $contentId . "&filename=" . urlencode($filename),
+			'filename' => urlencode($info['filename']),
+			'image' => $this->thumbHandler . "content_id=" . $contentId . "&filename=" . urlencode($info['filename']),
 			'title' => $info['title'],
 			'description' => $info['description'],
 			'keywords' => $info['keywords'],
@@ -286,19 +286,21 @@ class GalleryManagement
 			elseif (isset($_POST['cmdsort']))  // Update image sort order
 			{
 				$sortnum = 0; 
-				foreach ($_POST['sort'] as $key => $filename)
+				foreach ($_POST['sort'] as $key => $id)
 				{
 					$sortnum++; 
-					$modx->db->update("sortorder='" . $sortnum . "'", $modx->getFullTableName($this->galleriesTable), "filename='" . urldecode($filename) . "' AND content_id='" . $content_id . "'");
+					$modx->db->update("sortorder='" . $sortnum . "'", $modx->getFullTableName($this->galleriesTable), "id='" . $id . "'");
 				}
 			}
 			elseif (isset($_GET['delete']))  // Delete requested image
 			{
-				$rs = $modx->db->select('filename', $modx->getFullTableName($this->galleriesTable), "filename='" . urldecode($_GET['delete']) . "' AND content_id='" . $content_id . "'");
-                		if ($modx->db->getRecordCount($result) > 0)
+				$id = intval($_GET['delete']);
+				$rs = $modx->db->select('filename', $modx->getFullTableName($this->galleriesTable), "id='" . $id . "'");
+                if ($modx->db->getRecordCount($result) > 0)
 				{
 					$filename = $modx->db->getValue($rs);
 
+					file_put_contents('/home/evd/Develop/www/evo.dev/www/1.txt',$target_dir . 'thumbs/' . $filename);
 					if (file_exists($target_dir . 'thumbs/' . $filename))
 						unlink($target_dir . 'thumbs/' . $filename);
 					if (file_exists($target_dir . 'original/' . $filename))
@@ -307,7 +309,7 @@ class GalleryManagement
 						unlink($target_dir . $filename);
 
 					// Remove record from database
-					$modx->db->delete($modx->getFullTableName($this->galleriesTable), "filename='" . urldecode($_GET['delete']) . "' AND content_id='" . $content_id . "'");
+					$modx->db->delete($modx->getFullTableName($this->galleriesTable), "id='" . $id . "'");
 				}
 			}
 			elseif (isset($_POST['edit']))  // Update image information
@@ -340,11 +342,11 @@ class GalleryManagement
 
 			// Read through project files directory and show thumbs
 			$thumbs = '';
-			$result = $modx->db->select('filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), 'content_id=' . $content_id, 'sortorder ASC');
+			$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), 'content_id=' . $content_id, 'sortorder ASC');
 			while ($row = $modx->fetchRow($result))
 			{
 //				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" title=\"" . stripslashes($row['filename']) . "\" class=\"edit\" rel=\"moodalbox 420 375\">Edit</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" onclick=\"return Uploader.deleteConfirm()\" class=\"delete\">Delete</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
-				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
+				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
 			}
 
 			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id;
@@ -555,8 +557,9 @@ class GalleryManagement
 				// Replace mode
 				
 				// Delete existing image
-				$oldfilename = urldecode($_POST['edit']);
-				if($oldfilename !== $target_fname){
+				$id = intval($_POST['edit']);
+				$oldfilename = $modx->db->getValue($modx->db->select('filename',$modx->getFullTableName('portfolio_galleries'),'id='.$id));
+				if(!empty($oldfilename) && $oldfilename !== $target_fname){
 					if (file_exists($target_dir . 'thumbs/' . $oldfilename))
 						unlink($target_dir . 'thumbs/' . $oldfilename);
 					if (file_exists($target_dir . 'original/' . $oldfilename))
@@ -569,7 +572,7 @@ class GalleryManagement
 				$fields = array(
 					'filename' => $modx->db->escape($target_fname)
 				);
-				$modx->db->update($fields, $modx->getFullTableName('portfolio_galleries'), "filename='".$oldfilename."' AND content_id='" . $content_id . "'");
+				$modx->db->update($fields, $modx->getFullTableName('portfolio_galleries'), "id='".$id."'");
 				
 			} else
 			{
@@ -587,10 +590,11 @@ class GalleryManagement
 					'sortorder' => $pos
 				);
 				$modx->db->insert($fields, $modx->getFullTableName('portfolio_galleries'));
+				$id = $modx->db->getInsertId();
 			}
 			
 			//return new filename
-			echo $target_fname;
+			return json_encode(array('result'=>'ok','filename'=>$target_fname,'id'=>$id));
 		}
 		
 	}
