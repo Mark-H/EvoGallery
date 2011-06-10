@@ -5,7 +5,7 @@ $(document).ready(function(){
 		'uploader': '[+base_path+]js/uploadify/uploadify.swf',
 		'script': '[+base_path+]action.php',
 		'checkScript': '[+base_path+]check.php',
-		'scriptData': {[+params+]},
+		'scriptData': {[+params+],[+uploadparams+]},
 		'folder': '[+base_url+]assets/galleries/[+content_id+]',
 		'multi': true,
 		'fileDesc': '[+lang.image_files+]',
@@ -74,7 +74,7 @@ $(document).ready(function(){
                 		'uploader': '[+base_path+]js/uploadify/uploadify.swf',
                 		'script': '[+base_path+]action.php',
                 		'checkScript': '[+base_path+]check.php',
-                		'scriptData': {[+params+], 'edit': $.urlParam('edit')},
+                		'scriptData': {[+params+], [+uploadparams+], 'edit': $.urlParam('edit')},
                 		'folder': '[+base_url+]assets/galleries/[+content_id+]',
                 		'multi': false,
                 		'fileDesc': '[+lang.image_files+]',
@@ -101,6 +101,17 @@ $(document).ready(function(){
 
         $("#uploadList").sortable();
 	}
+    $('#cmdCntDel').click(function(){
+		if(confirm('[+lang.delete_confirm+]')){
+			$.post("[+base_path+]action.php", 
+					{[+params+], 'action': 'deleteall', 'mode': 'contentid', 'action_id': [+content_id+]},
+					function() {
+                        window.location.reload();
+					}
+			);		
+		}
+        return false;
+    });
 });
 -->
 </script>

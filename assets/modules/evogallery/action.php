@@ -32,7 +32,7 @@ include_once('classes/management.class.inc.php');
 if (class_exists('GalleryManagement'))
 {
 	$manager = new GalleryManagement($parameters);
-	return $manager->executeAction();
+	echo $manager->executeAction();
 }	
 else
 	$modx->logEvent(1, 3, 'Error loading Portfolio Galleries management module');

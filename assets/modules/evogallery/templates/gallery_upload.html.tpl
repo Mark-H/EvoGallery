@@ -18,4 +18,8 @@
     <p>[+lang.sort_text+]</p>
 </div>
 
+<div class="controls">
+	<a id="cmdCntDel" href="#">Delete all images</a>
+</div>
+
 </form>

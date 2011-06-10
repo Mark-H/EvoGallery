@@ -324,7 +324,8 @@ class GalleryManagement
 			$tplparams = array(
 				'self' => urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)),
 				'action' => $this->current,
-				'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '", "action": "upload", "js": "1", "content_id": "' . $content_id . '"',
+				'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '"',
+				'uploadparams' => '"action": "upload", "js": "1", "content_id": "' . $content_id . '"',
 				'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
 				'base_url' => $modx->config['base_url'],
 				'content_id' => $content_id,
@@ -497,10 +498,16 @@ class GalleryManagement
 	
 	function executeAction()
 	{
+		global $modx;
 		switch($_REQUEST['action'])
 		{
 			case 'upload':
 				return $this->uploadFile();
+				break;
+			case 'deleteall':
+				$mode = isset($_POST['mode'])?$_POST['mode']:'';
+				$ids = isset($_POST['action_id'])?$modx->db->escape($_POST['action_id']):'';
+				return $this->deleteImages($mode,explode(',',$ids));
 				break;
 		}
 	}
@@ -602,6 +609,43 @@ class GalleryManagement
 			return json_encode(array('result'=>'ok','filename'=>$target_fname,'id'=>$id));
 		}
 		
+	}
+	
+	function deleteImages($mode = 'id', $ids = array())
+	{
+		global $modx;
+		$where = '';
+		switch ($mode)
+		{
+			case 'id':
+				if (!sizeof($ids))
+					return false;
+				$where = 'id in ('.implode(',',$ids).')';
+				break;
+			case 'all':
+				$where = '';
+				break;
+			case 'contentid':
+				if (!sizeof($ids))
+					return false;
+				$where = 'content_id in ('.implode(',',$ids).')';
+				break;
+			default:
+				return false;
+		}
+		$ds = $modx->db->select('id, filename, content_id',$modx->getFullTablename($this->galleriesTable),$where);
+		while ($row = $modx->db->getRow($ds))
+		{
+			$target_dir = $this->config['savePath'].'/'.$row['content_id'].'/';
+			if (file_exists($target_dir . 'thumbs/' . $row['filename']))
+				unlink($target_dir . 'thumbs/' . $row['filename']);
+			if (file_exists($target_dir . 'original/' . $row['filename']))
+				unlink($target_dir . 'original/' . $row['filename']);
+			if (file_exists($target_dir . $row['filename']))
+				unlink($target_dir . $row['filename']);
+		}
+		$modx->db->delete($modx->getFullTablename($this->galleriesTable),$where);
+		return true;
 	}
 }
 ?>
