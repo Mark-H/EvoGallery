@@ -2,8 +2,18 @@
 $path_to_modx_config = '../../../manager/includes/config.inc.php';
 
 include_once($path_to_modx_config);
+
+if (isset($_REQUEST[$site_sessionname]))
+	session_id($_REQUEST[$site_sessionname]); //without this always generate new session
+
 startCMSSession();
 
+if (!$_SESSION['mgrValidated'])
+{
+	echo 'access denied';
+	die;
+}	
+	
 include_once "../../../manager/includes/document.parser.class.inc.php";
 $modx = new DocumentParser;
 $modx->loadExtension("ManagerAPI");
