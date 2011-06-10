@@ -502,22 +502,7 @@ class GalleryManagement
 	
 	function getPhpthumbConfig($params)
 	{
-		$params_arr = explode(',',$params);
-		$result = array();
-		$fltr = array();
-		foreach($params_arr as $param)
-		{
-			list($key,$value) = explode('#',$param);
-			if (strpos($key,'fltr')!==false)
-			{
-				$key = rtrim($key,'[]');
-				$fltr[] = $value;
-			} else
-				$result[$key] = $value;
-		}
-		if (sizeof($fltr))
-			$result['fltr'] = $fltr;
-		return $result;	
+		return json_decode(str_replace("'","\"",$params),true);;	
 	}
 	
 	function uploadFile()

@@ -7,7 +7,7 @@
  * @category	module
  * @version 	1.0 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
- * @internal	@properties	&docId=Root Document ID;integer;0 &phpthumbImage=PHPThumb config for images;string;w#940,q#95 &phpthumbThumb=PHPThumb config for thumbs;string;w#175,q#75 &savePath=Save path;string;assets/galleries &keepOriginal=Keep original images;list;Yes,No;Yes
+ * @internal	@properties	&docId=Root Document ID;integer;0 &phpthumbImage=PHPThumb config for images in JSON;textarea;{'w': 940, 'q': 95} &phpthumbThumb=PHPThumb config for thumbs in JSON;textarea;{'w': 175, 'q': 75} &savePath=Save path;string;assets/galleries &keepOriginal=Keep original images;menu;Yes,No
  * @internal	@guid 	
  * @internal	@shareparams 1
  * @internal	@dependencies requires files located at /assets/modules/evogallery/
@@ -21,7 +21,7 @@
  * jQuery rewrite and updates by Jeff Whitfield <jeff@collabpad.com>
  */
 
-include_once($modx->config['base_path'] . "assets/modules/evogallery/config.inc.php");
+$params['modulePath'] = $modx->config['base_path'].'assets/modules/evogallery/';
 include_once($params['modulePath'] . "classes/maketable.class.inc.php");
 include_once($params['modulePath'] . "classes/management.class.inc.php");
 
