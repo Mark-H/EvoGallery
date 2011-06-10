@@ -300,7 +300,6 @@ class GalleryManagement
 				{
 					$filename = $modx->db->getValue($rs);
 
-					file_put_contents('/home/evd/Develop/www/evo.dev/www/1.txt',$target_dir . 'thumbs/' . $filename);
 					if (file_exists($target_dir . 'thumbs/' . $filename))
 						unlink($target_dir . 'thumbs/' . $filename);
 					if (file_exists($target_dir . 'original/' . $filename))
@@ -504,7 +503,7 @@ class GalleryManagement
 	
 	function getPhpthumbConfig($params)
 	{
-		return json_decode(str_replace("'","\"",$params),true);;	
+		return json_decode(str_replace("'","\"",$params),true);	
 	}
 	
 	function uploadFile()
