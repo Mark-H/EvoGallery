@@ -135,3 +135,7 @@ p.thumbPreview img {
     background-color: #111; 
     color: #fff; 
 }
+
+.controls {
+	padding: 2px 0 5px;
+}

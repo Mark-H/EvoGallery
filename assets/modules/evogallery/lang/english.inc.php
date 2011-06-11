@@ -31,6 +31,15 @@
 	$_lang['delete'] = 'Delete';
 	$_lang['search'] = 'Search';
 	$_lang['click_view_categories'] = 'Click to view products/categories';
+	$_lang['in_this_doc'] = 'In this document';
+	$_lang['in_all_gallery'] = 'In gallery';
+	$_lang['delete_all'] = 'delete all images';
+	$_lang['regenerate_all'] = 'regenerate all images';
+	$_lang['delete_indoc_confirm'] = 'Are you sure you want to delete all images in this document?';
+	$_lang['delete_all_confirm'] = 'Are you sure you want to delete all images in gallery (It may take long time)?';
+	$_lang['regenerate_indoc_confirm'] = 'Are you sure you want to regenerate all images in this document?';
+	$_lang['regenerate_all_confirm'] = 'Are you sure you want to regenerate all images gallery (It may take long time)?';
+	$_lang['operation_complete'] = 'Operation complete';
 
 	$_lang['mm_tab_name'] = 'Photos';
 	$_lang['mm_save_required'] = 'You must save this page before you can manage the photos associated with it.';

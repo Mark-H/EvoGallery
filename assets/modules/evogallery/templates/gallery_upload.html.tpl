@@ -18,8 +18,7 @@
     <p>[+lang.sort_text+]</p>
 </div>
 
-<div class="controls">
-	<a id="cmdCntDel" href="#">Delete all images</a>
+<div class="doccontrols">
+	[+lang.in_this_doc+]: <a id="cmdCntDel" href="#">[+lang.delete_all+]</a> <a id="cmdCntRegenerate" href="#">[+lang.regenerate_all+]</a>
 </div>
-
 </form>

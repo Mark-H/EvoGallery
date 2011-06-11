@@ -88,7 +88,7 @@ class GalleryManagement
 		$this_page = $this->current . '?a=' . $this->a . '&amp;id=' . $this->id;
 
 		$contentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
-		$id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
+		$id = isset($_GET['edit']) ? intval($_GET['edit']) : '';
 
 		$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), "id = '" . $id . "'");
 		$info = $modx->fetchRow($result);
@@ -290,6 +290,7 @@ class GalleryManagement
 				foreach ($_POST['sort'] as $key => $id)
 				{
 					$sortnum++; 
+					$id = intval($id);
 					$modx->db->update("sortorder='" . $sortnum . "'", $modx->getFullTableName($this->galleriesTable), "id='" . $id . "'");
 				}
 			}
@@ -507,7 +508,18 @@ class GalleryManagement
 			case 'deleteall':
 				$mode = isset($_POST['mode'])?$_POST['mode']:'';
 				$ids = isset($_POST['action_id'])?$modx->db->escape($_POST['action_id']):'';
-				return $this->deleteImages($mode,explode(',',$ids));
+				$ids = explode(',',$ids);
+				foreach($ids as $key=>$value)
+					$ids[$key] = intval($value);
+				return $this->deleteImages($mode,$ids);
+				break;
+			case 'regenerateall':
+				$mode = isset($_POST['mode'])?$_POST['mode']:'';
+				$ids = isset($_POST['action_id'])?$modx->db->escape($_POST['action_id']):'';
+				$ids = explode(',',$ids);
+				foreach($ids as $key=>$value)
+					$ids[$key] = intval($value);
+				return $this->regenerateImages($mode,$ids);
 				break;
 		}
 	}
@@ -611,9 +623,8 @@ class GalleryManagement
 		
 	}
 	
-	function deleteImages($mode = 'id', $ids = array())
+	function getWhereClassByMode($mode = 'id', $ids = array())
 	{
-		global $modx;
 		$where = '';
 		switch ($mode)
 		{
@@ -633,6 +644,16 @@ class GalleryManagement
 			default:
 				return false;
 		}
+		return $where;
+	}
+		
+	function deleteImages($mode = 'id', $ids = array())
+	{
+		global $modx;
+		$where = $this->getWhereClassByMode($mode, $ids);
+		if ($where===false)
+			return false;
+			
 		$ds = $modx->db->select('id, filename, content_id',$modx->getFullTablename($this->galleriesTable),$where);
 		while ($row = $modx->db->getRow($ds))
 		{
@@ -645,6 +666,26 @@ class GalleryManagement
 				unlink($target_dir . $row['filename']);
 		}
 		$modx->db->delete($modx->getFullTablename($this->galleriesTable),$where);
+		return true;
+	}
+	
+	function regenerateImages($mode = 'id', $ids = array())
+	{
+		global $modx;
+		$where = $this->getWhereClassByMode($mode, $ids);
+		if ($where===false)
+			return false;
+		$ds = $modx->db->select('id, filename, content_id',$modx->getFullTablename($this->galleriesTable),$where);
+		while ($row = $modx->db->getRow($ds))
+		{
+			$target_dir = $this->config['savePath'].'/'.$row['content_id'].'/';
+			$orininal_file = $target_dir . 'original/' . $row['filename']; 
+			if (file_exists($orininal_file))
+			{
+				$this->resizeImage($orininal_file, $target_dir . $row['filename'], $this->getPhpthumbConfig($this->config['phpthumbImage']));  // Create and save main image
+				$this->resizeImage($orininal_file, $target_dir . 'thumbs/' . $row['filename'], $this->getPhpthumbConfig($this->config['phpthumbThumb']));  // Create and save thumb
+			}	
+		}
 		return true;
 	}
 }
