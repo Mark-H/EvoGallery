@@ -450,7 +450,7 @@ class GalleryManagement
 			"`title` varchar(255) NOT NULL, " .
 			"`description` TEXT NOT NULL, " .
 			"`keywords` TEXT NOT NULL, " .
-			"`sortorder` tinyint(4) NOT NULL default '0'" .
+			"`sortorder` smallint(7) NOT NULL default '0'" .
                 ")";
                 $modx->db->query($sql);
     }
@@ -601,7 +601,7 @@ class GalleryManagement
 			} else
 			{
 				// Find the last order position
-				$rs = $modx->db->select('sortorder', $modx->getFullTableName('portfolio_galleries'), '', 'sortorder DESC', '1');
+				$rs = $modx->db->select('sortorder', $modx->getFullTableName('portfolio_galleries'), 'content_id="'.$content_id.'"', 'sortorder DESC', '1');
 				if ($modx->db->getRecordCount($rs) > 0)
 					$pos = $modx->db->getValue($rs) + 1;
 				else
