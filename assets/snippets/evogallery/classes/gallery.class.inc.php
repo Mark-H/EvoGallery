@@ -139,6 +139,7 @@ class Gallery
 		}
 
 		$phx->setPHxVariable('items', $items);
+		$phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 
 		return $phx->Parse($tpl);  // Pass through PHx;
 	}
@@ -229,6 +230,7 @@ class Gallery
 		}
 
 		$phx->setPHxVariable('items', $items);
+		$phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 
 		return $phx->Parse($tpl);  // Pass through PHx;
 	}
@@ -272,6 +274,7 @@ class Gallery
 		}
 
 		$phx->setPHxVariable('items', $items);
+		$phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 
 		return $phx->Parse($tpl);  // Pass through PHx;
 	}
