@@ -101,54 +101,6 @@ $(document).ready(function(){
 
         $("#uploadList").sortable();
 	}
-    $('#cmdCntDel').click(function(){
-		if(confirm('[+lang.delete_indoc_confirm+]')){
-			$.post("[+base_path+]action.php", 
-					{[+params+], 'action': 'deleteall', 'mode': 'contentid', 'action_id': [+content_id+]},
-					function() {
-                        alert('[+lang.operation_complete+]');
-                        window.location.reload();
-					}
-			);		
-		}
-        return false;
-    });
-    $('#cmdCntRegenerate').click(function(){
-		if(confirm('[+lang.regenerate_indoc_confirm+]')){
-			$.post("[+base_path+]action.php", 
-					{[+params+], 'action': 'regenerateall', 'mode': 'contentid', 'action_id': [+content_id+]},
-					function() {
-                        alert('[+lang.operation_complete+]');
-                        window.location.reload();
-					}
-			);		
-		}
-        return false;
-    });
-    $('#cmdAllDel').click(function(){
-		if(confirm('[+lang.delete_all_confirm+]')){
-			$.post("[+base_path+]action.php", 
-					{[+params+], 'action': 'deleteall', 'mode': 'all'},
-					function() {
-                        alert('[+lang.operation_complete+]');
-                        window.location.reload();
-					}
-			);		
-		}
-        return false;
-    });
-    $('#cmdAllRegenerate').click(function(){
-		if(confirm('[+lang.regenerate_all_confirm+]')){
-			$.post("[+base_path+]action.php", 
-					{[+params+], 'action': 'regenerateall', 'mode': 'all'},
-					function() {
-                        alert('[+lang.operation_complete+]');
-                        window.location.reload();
-					}
-			);		
-		}
-        return false;
-    });
 });
 -->
 </script>

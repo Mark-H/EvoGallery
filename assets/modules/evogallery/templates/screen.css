@@ -139,3 +139,30 @@ p.thumbPreview img {
 .controls {
 	padding: 2px 0 5px;
 }
+
+/* the popup element */
+div.popup {
+	
+	/* dimensions after the growing animation finishes  */
+	width:350px;
+	height:100px;		
+	
+	/* initially overlay is hidden */
+	display:none;
+	
+	/* some padding to layout nested elements nicely  */
+	padding:55px;
+    
+    z-index: 999;
+	background: url(../images/white-small.png) no-repeat;
+}
+
+div.popup .close {
+	display: none;
+	padding: 15px 0;
+}
+
+div.popup .progress {
+	display: none;
+	padding: 15px 0;
+}

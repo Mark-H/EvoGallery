@@ -144,6 +144,8 @@ class GalleryManagement
 
 		$this_page = $this->current . '?a=' . $this->a . '&id=' . $this->id;
 
+		$content_id = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];  // Get document id
+
 		$tplparams = array();
 
 		$parentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
@@ -211,6 +213,25 @@ class GalleryManagement
 				);
 			}
 		}
+
+		// Get contents of js script and replace necessary action URL
+		$tplparams = array(
+			'self' => urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)),
+			'action' => $this->current,
+			'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '"',
+			'uploadparams' => '"action": "upload", "js": "1", "content_id": "' . $content_id . '"',
+			'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
+			'base_url' => $modx->config['base_url'],
+			'content_id' => $content_id,
+			'thumbs' => urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)),
+			'upload_maxsize' => $modx->config['upload_maxsize']
+		);
+
+		$js = $this->processTemplate('js.tpl', $tplparams);
+
+		$tplparams = array(
+			'js' => $js
+		);
 
 		if (is_array($documents))  // Ensure data was returned
 		{
@@ -497,6 +518,9 @@ class GalleryManagement
 		return $tpl;
 	}
 	
+	/**
+	* Execute Ajax action
+	*/
 	function executeAction()
 	{
 		global $modx;
@@ -507,7 +531,7 @@ class GalleryManagement
 				break;
 			case 'deleteall':
 				$mode = isset($_POST['mode'])?$_POST['mode']:'';
-				$ids = isset($_POST['action_id'])?$modx->db->escape($_POST['action_id']):'';
+				$ids = isset($_POST['action_ids'])?$modx->db->escape($_POST['action_ids']):'';
 				$ids = explode(',',$ids);
 				foreach($ids as $key=>$value)
 					$ids[$key] = intval($value);
@@ -515,20 +539,38 @@ class GalleryManagement
 				break;
 			case 'regenerateall':
 				$mode = isset($_POST['mode'])?$_POST['mode']:'';
-				$ids = isset($_POST['action_id'])?$modx->db->escape($_POST['action_id']):'';
+				$ids = isset($_POST['action_ids'])?$modx->db->escape($_POST['action_ids']):'';
 				$ids = explode(',',$ids);
 				foreach($ids as $key=>$value)
 					$ids[$key] = intval($value);
 				return $this->regenerateImages($mode,$ids);
 				break;
+			case 'getids':
+				$field = isset($_GET['field'])?$modx->db->escape($_GET['field']):'id';
+				$mode = isset($_GET['mode'])?$_GET['mode']:'';
+				$ids = isset($_GET['action_ids'])?$modx->db->escape($_GET['action_ids']):'';
+				$ids = explode(',',$ids);
+				foreach($ids as $key=>$value)
+					$ids[$key] = intval($value);
+				return $this->getIDs($field, $mode, $ids);
+				break;
+			case 'fake';
+				sleep(1);
+				break;
 		}
 	}
 	
+	/**
+	* Decode PHPThumb configuration
+	*/
 	function getPhpthumbConfig($params)
 	{
 		return json_decode(str_replace("'","\"",$params),true);	
 	}
 	
+	/**
+	* Upload file
+	*/
 	function uploadFile()
 	{
 		global $modx;
@@ -623,6 +665,9 @@ class GalleryManagement
 		
 	}
 	
+	/**
+	* Get SQL Where condition given mode and ids
+	*/
 	function getWhereClassByMode($mode = 'id', $ids = array())
 	{
 		$where = '';
@@ -647,6 +692,9 @@ class GalleryManagement
 		return $where;
 	}
 		
+	/**
+	* Delete given images
+	*/
 	function deleteImages($mode = 'id', $ids = array())
 	{
 		global $modx;
@@ -669,6 +717,9 @@ class GalleryManagement
 		return true;
 	}
 	
+	/**
+	* Regenerate given images from original (if exists)
+	*/
 	function regenerateImages($mode = 'id', $ids = array())
 	{
 		global $modx;
@@ -688,5 +739,25 @@ class GalleryManagement
 		}
 		return true;
 	}
+	
+	/**
+	* Get Ids of $field (id or content_id)
+	*/
+	function getIDs($field, $mode, $ids)
+	{
+		global $modx;
+		$result_ids = array();
+		$where = $this->getWhereClassByMode($mode, $ids);
+		if ($where===false)
+			return false;
+		if (!empty($where))
+			$where=' WHERE '.$where;
+		$ds = $modx->db->query('SELECT DISTINCT '.$field.' FROM '.$modx->getFullTablename($this->galleriesTable).$where);
+		while ($row = $modx->db->getRow($ds))
+		{
+			$result_ids[] = $row[$field];
+		}	
+		return json_encode($result_ids);
+	}	
 }
 ?>
