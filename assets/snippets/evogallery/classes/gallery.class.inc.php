@@ -85,11 +85,20 @@ class Gallery
 		$items = '';
 
 		// Retrieve list of documents under the requested id
-		$filter = "published = '1' AND type = 'document' AND hidemenu <= '" . $this->config['ignoreHidden'] . "'";
+		$filter = " WHERE published = '1' AND type = 'document' AND hidemenu <= '" . $this->config['ignoreHidden'] . "'";
 		if (!empty($docSelect))
 			$filter.=' AND '.$docSelect;
-		$result = $modx->db->select("id, pagetitle, longtitle, description, alias, pub_date, introtext, editedby, editedon, publishedon, publishedby, menutitle", $modx->getFullTableName('site_content'), $filter, $this->config['gallerySortBy'] . ' ' . $this->config['gallerySortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
-      $recordCount = $modx->db->getRecordCount($result);
+	
+		if ($this->config['paginate']) {
+			//Retrieve total records
+			$totalRows = $modx->db->getValue('select count(*) from '.$modx->getFullTableName('site_content').$filter. (!empty($this->config['limit']) ? 'limit '.$this->config['limit'] : ""));
+			$limit = $this->paginate($totalRows);
+			if (!empty($limit))
+				$limit = ' limit '.$limit;
+		} else
+			$limit = !empty($this->config['limit']) ? ' limit '.$this->config['limit'] : "";
+		$result = $modx->db->query("select id, pagetitle, longtitle, description, alias, pub_date, introtext, editedby, editedon, publishedon, publishedby, menutitle from " . $modx->getFullTableName('site_content') . $filter. ' order by '. $this->config['gallerySortBy'] . ' ' . $this->config['gallerySortDir'] . $limit);
+		$recordCount = $modx->db->getRecordCount($result);
 		if ($recordCount > 0)
 		{
 		    $count = 1;
@@ -100,7 +109,7 @@ class Gallery
 				// Get total number of images for total placeholder
 				$total_result = $modx->db->select("filename", $modx->getFullTableName($this->galleriesTable), "content_id = '" . $row['id'] . "'");
                 $total = $modx->db->getRecordCount($total_result);
-                
+
 				// Fetch first image for each gallery, using the image sort order/direction
 				$image_result = $modx->db->select("filename", $modx->getFullTableName($this->galleriesTable), "content_id = '" . $row['id'] . "'", $this->config['sortBy'] . ' ' . $this->config['sortDir'], '1');
 				if ($modx->db->getRecordCount($image_result) > 0)
@@ -197,8 +206,18 @@ class Gallery
 		$phx = new PHxParser();  // Instantiate PHx
 
 		$items = '';
+		$limit = '';
+		$where = !empty($docSelect)?' WHERE '.$docSelect.' ':'';
+		if ($this->config['paginate']) {
+			//Retrieve total records
+			$totalRows = $modx->db->getValue('select count(*) from '.$modx->getFullTableName($this->galleriesTable).$where.(!empty($this->config['limit']) ? ' limit '.$this->config['limit'] : ""));
+			$limit = $this->paginate($totalRows);
+			if (!empty($limit))
+				$limit = ' limit '.$limit;
+		} else
+			$limit = !empty($this->config['limit']) ? ' limit '.$this->config['limit'] : "";
 		// Retrieve photos from the database table
-		$result = $modx->db->select("*", $modx->getFullTableName($this->galleriesTable), $docSelect, $this->config['sortBy'] . ' ' . $this->config['sortDir'],(!empty($this->config['limit']) ? $this->config['limit'] : ""));
+		$result = $modx->db->query("select * from ". $modx->getFullTableName($this->galleriesTable). $where. ' order by '. $this->config['sortBy'] . ' ' . $this->config['sortDir']. $limit);
         $recordCount = $modx->db->getRecordCount($result);
 		if ($recordCount > 0)
 		{
@@ -228,7 +247,6 @@ class Gallery
 				$count++;
 			}
 		}
-
 		$phx->setPHxVariable('items', $items);
 		$phx->setPHxVariable('plugin_dir', $this->config['snippetUrl'] . $this->config['type'] . '/');
 
@@ -321,5 +339,88 @@ class Gallery
 			}
 		}
 	}
+
+	/**
+	* Replace placeholders in template
+	*/
+	function processTemplate($tpl, $params)
+	{
+		//Parse placeholders
+		foreach($params as $key=>$value)
+		{
+			$tpl = str_replace('[+'.$key.'+]', $value, $tpl);
+		}
+		return $tpl;
+	}
+
+	/**
+	*  Set pagination's placeholders
+	*  Return string with limit values for SQL query
+	*/
+	function paginate($totalRows) {
+		global $modx;
+		if (!$this->config['paginate'])
+			return "";
+
+		$pageUrl = !empty($this->config['id'])?$this->config['id'].'_page':'page';
+		$page = isset($_GET[$pageUrl])?intval($_GET[$pageUrl]):1;
+		$rowsPerPage = $this->config['show'];
+		$totalPages = ceil($totalRows/$rowsPerPage);
+		$previous = $page - 1;
+		$next = $page + 1;
+		$start = ($page-1)*$rowsPerPage;
+		if ($start<0)
+			$start = 0;
+		$stop = $start + $rowsPerPage - 1;
+		if ($stop>=$totalRows)
+			$stop = $totalRows - 1;
+
+		$split = "";
+		if ($previous > 0 && $next <= $totalPages)
+			$split = $paginateSplitterCharacter;
+
+		$previoustpl = '';
+		$previousplaceholder = '';
+		if ($previous > 0)
+			$previoustpl = 'tplPaginatePrevious';
+		elseif ($this->config['paginateAlwaysShowLinks'])
+			$previoustpl = 'tplPaginatePreviousOff';
+		if (!empty($previoustpl))
+			$previousplaceholder = $this->processTemplate($this->config[$previoustpl],
+															array('url'=>$modx->makeUrl($modx->documentIdentifier,'',($previous!=1?"$pageUrl=$previous":"")),
+																'PaginatePreviousText'=>$this->config['paginatePreviousText']));			
+		$nexttpl = '';
+		$nextplaceholder = '';
+		if ($next <= $totalPages)
+			$nexttpl = 'tplPaginateNext';
+		elseif ($this->config['paginateAlwaysShowLinks'])
+			$nexttpl = 'tplPaginateNextOff';
+		if (!empty($nexttpl))
+			$nextplaceholder = $this->processTemplate($this->config[$nexttpl],
+														array('url'=>$modx->makeUrl($modx->documentIdentifier,'',($next!=1?"$pageUrl=$next":"")),
+																'PaginateNextText'=>$this->config['paginateNextText']));			
+
+		$pages = '';
+		for ($i=1;$i<=$totalPages;$i++) {
+			if ($i != $page) {
+				$pages .= $this->processTemplate($this->config['tplPaginatePage'],
+												array('url'=>$modx->makeUrl($modx->documentIdentifier,'',($i!=1?"$pageUrl=$i":"")),'page'=>$i));
+			} else {
+				$modx->setPlaceholder($this->config['id']."currentPage", $i);
+				$pages .= $this->processTemplate($this->config['tplPaginateCurrentPage'], array('page'=>$i));
+			}
+		}
+		$modx->setPlaceholder($this->config['id']."next", $nextplaceholder);
+		$modx->setPlaceholder($this->config['id']."previous", $previousplaceholder);
+		$modx->setPlaceholder($this->config['id']."splitter", $split);
+		$modx->setPlaceholder($this->config['id']."start", $start+1);
+		$modx->setPlaceholder($this->config['id']."stop", $stop+1);
+		$modx->setPlaceholder($this->config['id']."total", $totalRows);
+		$modx->setPlaceholder($this->config['id']."pages", $pages);
+		$modx->setPlaceholder($this->config['id']."perPage", $rowsPerPage);
+		$modx->setPlaceholder($this->config['id']."totalPages", $totalPages);
+		return $start.','.($stop-$start+1);
+	}	
+
 }
 ?>

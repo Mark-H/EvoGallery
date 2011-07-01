@@ -98,6 +98,45 @@ $params['snippetUrl'] = isset($snippetUrl) ? $snippetUrl : $modx->config['base_u
 $params['snippetPath'] = isset($snippetPath) ? $snippetPath : $modx->config['base_path'] . 'assets/snippets/evogallery/';
 	// Path to the snippet directory
 
+$params['id'] = isset($id)?$id:'';
+	// Unique ID for this EvoGallery instance and unique URL parameters
+
+$params['paginate'] = isset($paginate)?$paginate:0;
+	// Paginate the results set into pages of &show length. 
+
+$params['paginateAlwaysShowLinks'] = isset($paginateAlwaysShowLinks)?$paginateAlwaysShowLinks:0;
+	// Determine whether or not to always show previous next links
+
+$params['show'] = isset($show)?$show:'20';
+	// Number of images to display in the results when pagination on
+
+$params['paginateNextText'] = isset($paginateNextText)?$paginateNextText:'Next';
+	// Text for next label
+
+$params['paginatePreviousText'] = isset($paginateNextText)?$paginateNextText:'Previous';
+	// Text for previous label
+
+$params['paginateSplitterCharacter'] = isset($paginateSplitterCharacter)?$modx->getChunk($paginateSplitterCharacter):"|";
+	// Splitter to use if always show is disabled
+
+$params['tplPaginatePrevious'] = isset($tplPaginatePrevious)?$modx->getChunk($tplPaginatePrevious):"<a href='[+url+]' class='eg_previous_link'>[+PaginatePreviousText+]</a>";
+	// Template for the previous link
+
+$params['tplPaginateNext'] = isset($tplPaginateNext)?$modx->getChunk($tplPaginateNext):"<a href='[+url+]' class='eg_next_link'>[+PaginateNextText+]</a>";
+	// Template for the next link
+
+$params['tplPaginateNextOff'] = isset($tplPaginateNextOff)?$modx->getChunk($tplPaginateNextOff):"<span class='eg_next_off eg_off'>[+PaginateNextText+]</span>";
+	// Template for the inside of the next link
+
+$params['tplPaginatePreviousOff'] = isset($tplPaginatePreviousOff)?$modx->getChunk($tplPaginatePreviousOff):"<span class='eg_previous_off eg_off'>[+PaginatePreviousText+]</span>";
+	// Template for the inside of the previous link
+
+$params['tplPaginatePage'] = isset($tplPaginatePage)?$modx->getChunk($tplPaginatePage):"<a class='eg_page' href='[+url+]'>[+page+]</a>";
+	// Template for the page link
+
+$params['tplPaginateCurrentPage'] = isset($tplPaginateCurrentPage)?$modx->getChunk($tplPaginateCurrentPage):"<span class='eg_currentpage'>[+page+]</span>";
+	// Template for the current page link
+
 /*--------------------------------------------------------------------------*/
 
 include_once($params['snippetPath'] . 'classes/gallery.class.inc.php');
