@@ -29,6 +29,7 @@
 	$_lang['no_children'] = 'This document contains no children.';
 	$_lang['edit'] = 'Edit';
 	$_lang['delete'] = 'Delete';
+	$_lang['select'] = 'Select';
 	$_lang['search'] = 'Search';
 	$_lang['click_view_categories'] = 'Click to view products/categories';
 	$_lang['in_this_doc'] = 'In this document';
@@ -44,6 +45,10 @@
 	$_lang['operation_complete'] = 'Operation complete';
 	$_lang['operation_error'] = 'Operation error, see error logs for details';
 	$_lang['close'] = 'Close';
+	$_lang['selectall'] = 'Select all';
+	$_lang['unselectall'] = 'Unselect all';
+	$_lang['move_to'] = 'Move to document';
+	$_lang['start'] = 'Start';
 
 	$_lang['mm_tab_name'] = 'Photos';
 	$_lang['mm_save_required'] = 'You must save this page before you can manage the photos associated with it.';

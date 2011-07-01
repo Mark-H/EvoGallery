@@ -70,24 +70,10 @@ $(document).ready(function(){
 		});
 		overlay.load();
 	}
-	
-    $('#cmdCntDel').click(function(){
-		if(confirm('[+lang.delete_indoc_confirm+]')){
-			$.execAction(this, {'action': 'deleteall', 'mode': 'contentid', 'action_ids': [+content_id+]});
-		}
-        return false;
-    });
-    
-    $('#cmdCntRegenerate').click(function(){
-		if(confirm('[+lang.regenerate_indoc_confirm+]')){
-			$.execAction(this, {'action': 'regenerateall', 'mode': 'contentid', 'action_ids': [+content_id+]});
-		}
-        return false;
-    });
-    
+   
     $('#cmdAllDel').click(function(){
 		if(confirm('[+lang.delete_all_confirm+]')){
-			$.execAction({'action': 'deleteall', 'mode': 'all'});
+			$.execAction(this, {'action': 'deleteall', 'mode': 'all'});
 		}
         return false;
     });
@@ -98,6 +84,8 @@ $(document).ready(function(){
 		}
         return false;
     });
+
+
 });
 -->
 </script>

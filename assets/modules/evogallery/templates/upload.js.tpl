@@ -17,10 +17,11 @@ $(document).ready(function(){
 		'onComplete': function(event, queueID, fileObj, response, data) {
             var uploadList = $('#uploadList');
             var info = eval('(' + response + ')');
-            uploadList.append("<li><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
+            uploadList.append("<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">[+lang.select+]</a></div><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
         },
         'onAllComplete': function(){
             $(".thbButtons").hide();
+            $("li").not('.selected').children(".thbSelect").hide();
         }
 	});
     $('#uploadFiles').click(function(){
@@ -33,11 +34,17 @@ $(document).ready(function(){
     });
 	if($('#uploadList').length > 0){
         $(".thbButtons").hide();
+        $(".thbSelect").hide();
         $("#uploadList li").live("mouseover", function(){
                 $(this).find(".thbButtons").show();
+                var sel = $(this).find(".thbSelect");
+				if (!sel.hasClass('selected'));
+					sel.show();
         });
         $("#uploadList li").live("mouseout", function(){
                 $(this).find(".thbButtons").hide();
+                if (!$(this).hasClass('selected'))
+					$(this).find(".thbSelect").hide();
         });
         $(".thbButtons .delete").live("click", function(event){
             if(confirm('[+lang.delete_confirm+]')){
@@ -98,9 +105,90 @@ $(document).ready(function(){
             overlay.load();
             return false;
         });
+        $(".thbSelect .select").live("click", function(event){
+			$(this).closest('li').toggleClass('selected');
+            return false;
+        });
+		$("#selectall").click( function() {
+			$("#uploadList li").addClass('selected');
+			$("#uploadList li .thbSelect").show();
+		});
+		$("#unselectall").click( function() {
+			$("#uploadList li").removeClass('selected');
+			$("#uploadList li .thbSelect").hide();
+		});
 
         $("#uploadList").sortable();
+
+		$.getMode = function(content_id) {
+			var ids = [];
+			$("#uploadList li.selected").each(function(){
+				ids.push($(this).find('input').val());
+			});
+			if (ids.length>0)
+				return {'mode': 'id','action_ids': ids};
+			else
+				return {'mode': 'contentid', 'action_ids': content_id};
+			
+		}
+
+		$('#cmdCntDel').click(function(){
+			if(confirm('[+lang.delete_indoc_confirm+]')){
+				var mode = $.getMode([+content_id+]);
+				$.execAction(this, {'action': 'deleteall', 'mode': mode['mode'], 'action_ids': mode['action_ids']});
+			}
+			return false;
+		});
+		
+		$('#cmdCntRegenerate').click(function(){
+			if(confirm('[+lang.regenerate_indoc_confirm+]')){
+				var mode = $.getMode([+content_id+]);
+				$.execAction(this, {'action': 'regenerateall', 'mode': mode['mode'], 'action_ids': mode['action_ids']});
+			}
+			return false;
+		});
+
+		$('#cmdCntMoveTo').click(function(){
+			var overlay = $(this).overlay({
+				api: 'true',
+				target: '#moveto-popup',
+				oneInstance: true,
+				closeOnEsc: true,
+				closeOnClick: false,
+				onLoad: function() {
+					parent.tree.ca = 'move';
+				},
+				onClose: function() {
+					parent.tree.ca = '';
+					window.location.reload();
+				}
+			});
+			overlay.load();
+			$('#moveto').click( function(){
+				var target = $("#movetarget_id").val();
+				if (target!=0) {
+					var mode = $.getMode([+content_id+]);
+					$.post("[+base_path+]action.php", 
+						{[+params+], 'action': 'move', 'target': target, 'mode': mode['mode'], 'action_ids': mode['action_ids'].toString()},
+						function() {
+							overlay.close();
+						}
+					);
+				}
+				return false;
+			});
+		});
 	}
 });
+
+
+function setMoveValue(pId, pName) {
+	if (pId!=0) {
+		$("#movetarget_id").val(pId);
+		$('#movetarget_doc').html("Document: <strong>" + pId + "</strong> (" + pName + ")");
+	}
+}
+
+
 -->
 </script>

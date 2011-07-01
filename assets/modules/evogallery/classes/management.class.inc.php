@@ -368,8 +368,7 @@ class GalleryManagement
 			$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), 'content_id=' . $content_id, 'sortorder ASC');
 			while ($row = $modx->fetchRow($result))
 			{
-//				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . urlencode($row['filename']) . "\" title=\"" . stripslashes($row['filename']) . "\" class=\"edit\" rel=\"moodalbox 420 375\">Edit</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . urlencode($row['filename']) . "\" onclick=\"return Uploader.deleteConfirm()\" class=\"delete\">Delete</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . urlencode($row['filename']) . "\" /></li>\n";
-				$thumbs .= "<li><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
+				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
 			}
 
 			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id;
@@ -545,6 +544,15 @@ class GalleryManagement
 					$ids[$key] = intval($value);
 				return $this->regenerateImages($mode,$ids);
 				break;
+			case 'move':
+				$mode = isset($_POST['mode'])?$_POST['mode']:'';
+				$target = isset($_POST['target'])?intval($_POST['target']):0;
+				$ids = isset($_POST['action_ids'])?$modx->db->escape($_POST['action_ids']):'';
+				$ids = explode(',',$ids);
+				foreach($ids as $key=>$value)
+					$ids[$key] = intval($value);
+				return $this->moveImages($mode,$ids,$target);
+				break;
 			case 'getids':
 				$field = isset($_GET['field'])?$modx->db->escape($_GET['field']):'id';
 				$mode = isset($_GET['mode'])?$_GET['mode']:'';
@@ -569,6 +577,23 @@ class GalleryManagement
 	}
 	
 	/**
+	* Check and create folders for images
+	*/
+	function makeFolders($target_dir) {
+		global $modx;
+
+		$new_folder_permissions = octdec($modx->config['new_folder_permissions']);
+		$keepOriginal = $this->config['keepOriginal']=='Yes';
+
+		if (!file_exists($target_dir))
+			mkdir($target_dir, $new_folder_permissions);
+		if (!file_exists($target_dir . 'thumbs'))
+			mkdir($target_dir . 'thumbs', $new_folder_permissions);
+		if ($keepOriginal && !file_exists($target_dir . 'original'))
+			mkdir($target_dir . 'original', $new_folder_permissions);
+	}
+
+	/**
 	* Upload file
 	*/
 	function uploadFile()
@@ -592,15 +617,8 @@ class GalleryManagement
 			$target_original = $target_dir . 'original/' . $target_fname;
 			
 			// Check for existence of document/gallery directories
-			if (!file_exists($target_dir))
-			{
-				$new_folder_permissions = octdec($modx->config['new_folder_permissions']);
-				mkdir($target_dir, $new_folder_permissions);
-				mkdir($target_dir . 'thumbs/', $new_folder_permissions);
-				if ($keepOriginal)
-					mkdir($target_dir . 'original/', $new_folder_permissions);
-			}
-
+			$this->makeFolders($target_dir);
+	
 			$movetofile = $keepOriginal?$target_original:$target_dir.uniqid();
 			// Copy uploaded image to final destination
 			if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $movetofile))
@@ -740,6 +758,39 @@ class GalleryManagement
 		return true;
 	}
 	
+	/**
+	* Move images to target doc
+	*/
+	function moveImages($mode = 'id', $ids = array(), $target = 0)
+	{
+		global $modx;
+		if ($target==0)
+			return false;
+		$where = $this->getWhereClassByMode($mode, $ids);
+		if ($where===false)
+			return false;
+		$target_dir = $this->config['savePath'].'/'.$target.'/';
+		$this->makeFolders($target_dir);
+		
+		$ds = $modx->db->select('id, filename, content_id',$modx->getFullTablename($this->galleriesTable),$where);
+		while ($row = $modx->db->getRow($ds))
+		{
+			//Move files
+			$source_dir = $this->config['savePath'].'/'.$row['content_id'].'/';
+			if (file_exists($source_dir.$row['filename']))
+				if (!rename($source_dir.$row['filename'], $target_dir.$row['filename']))
+					return false;
+			if (file_exists($source_dir.'thumbs/'.$row['filename']))
+				if (!rename($source_dir.'thumbs/'.$row['filename'], $target_dir.'thumbs/'.$row['filename']))
+					return false;
+			if (file_exists($source_dir.'original/'.$row['filename']))
+				if (!rename($source_dir.'original/'.$row['filename'], $target_dir.'original/'.$row['filename']))
+					return false;
+		}
+		$modx->db->update(array('content_id' => $target), $modx->getFullTablename($this->galleriesTable), $where);
+		return true;
+	}
+
 	/**
 	* Get Ids of $field (id or content_id)
 	*/

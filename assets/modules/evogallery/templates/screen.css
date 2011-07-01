@@ -141,7 +141,7 @@ p.thumbPreview img {
 }
 
 /* the popup element */
-div.popup {
+div.popup, div.popupclose {
 	
 	/* dimensions after the growing animation finishes  */
 	width:350px;
@@ -158,11 +158,26 @@ div.popup {
 }
 
 div.popup .close {
-	display: none;
-	padding: 15px 0;
 }
+
+div.popupclose div.close {
+	background-image:url(../js/overlay/close.png);
+	position:absolute;
+	right:5px;
+	top:-5px;
+	cursor:pointer;
+	height:35px;
+	width:35px;
+}
+
 
 div.popup .progress {
 	display: none;
 	padding: 15px 0;
 }
+
+.selectall {clear: left; margin-top: 5px;}
+.thbSelect { position: absolute; top: 0; left: 0; z-index: 150; }
+.thbSelect a { float: left; display: block; height: 21px; width: 20px; margin: 2px 6px 0 0; background: transparent url(../images/checkoff.png) no-repeat; text-indent: -9999px; }
+.selected .thbSelect a { background: transparent url(../images/checkon.png) no-repeat; }
+
