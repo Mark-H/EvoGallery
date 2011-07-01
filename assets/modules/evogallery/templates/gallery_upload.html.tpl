@@ -13,7 +13,7 @@
 <p id="sortdesc">[+lang.sort_description+]</p>
 <div id="uploadFiles"><ul id="uploadList">[+thumbs+]</ul></div>
 <div id="selectallcontrols">
-<div class="selectall"><a id="selectall" href="#">[+lang.selectall+]</a> <a id="unselectall" href="#">[+lang.unselectall+]</a></div>
+<div class="selectall"><a id="selectall" href="#">[+lang.selectall+]</a> | <a id="unselectall" href="#">[+lang.unselectall+]</a></div>
 </div>
 
 <div class="submit">
@@ -23,11 +23,11 @@
 </form>
 
 <div class="doccontrols">
-	[+lang.in_this_doc+]: <a id="cmdCntDel" href="#">[+lang.delete_all+]</a> <a id="cmdCntRegenerate" href="#">[+lang.regenerate_all+]</a>  <a id="cmdCntMoveTo" href="#">[+lang.move_to+]</a>
+	[+lang.in_this_doc+]: <a id="cmdCntDel" href="#">[+lang.delete_images+]</a> | <a id="cmdCntRegenerate" href="#">[+lang.regenerate_images+]</a> | <a id="cmdCntMoveTo" href="#">[+lang.move_to+]</a>
 </div>
 
 <div class="popupclose" id="moveto-popup"> 
-	<p id="movetarget_doc">Выберите в дереве любой контейнер, в который хотите переместить.</p>
+	<p id="movetarget_doc">[+lang.select_document+]</p>
 	<input id="movetarget_id" type="hidden" value="0"/>
 	<input id="moveto" type="button" value="[+lang.start+]" class="awesome" name="cmdmoveto" />
 </div>
