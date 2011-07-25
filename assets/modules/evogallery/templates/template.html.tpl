@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/uploadify/swfobject.js"></script>
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/uploadify/jquery.uploadify.v2.1.4.min.js"></script>
 	<script type="text/javascript" src="[+base_url+]assets/modules/evogallery/js/tags/tags.js"></script>
+	[+js+]
 </head>
 <body>
 [+content+]

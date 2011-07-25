@@ -37,6 +37,7 @@ class GalleryManagement
 		$this->listingTemplate = 'gallery_listing.html.tpl';
 		$this->uploadTemplate = 'gallery_upload.html.tpl';
 		$this->editTemplate = 'image_edit.html.tpl';
+		$this->galleryHeaderTemplate = 'gallery_header.html.tpl';
 
 		$this->galleriesTable = 'portfolio_galleries';
 
@@ -64,11 +65,27 @@ class GalleryManagement
 		}
 		else
 		{
-			$output = $this->viewListing();  // View/uplaod galleries and gallery images
+			  // View/uplaod galleries and gallery images
+			if (isset($_GET['onlygallery']))
+				$output = $this->viewGallery();
+			else
+				$output = $this->viewListing();
+
+			// Get contents of js script and replace necessary action URL
+			$tplparams = array(
+				'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '"',
+				'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
+				'base_url' => $modx->config['base_url'],
+				'content_id' => $content_id,
+			);
+			$js = $this->processTemplate('js.tpl', $tplparams);
+
     		$tplparams = array(
 				'base_url' => $modx->config['base_url'],
-				'content' => $output
+				'content' => $output,
+				'js' => $js
 			);
+
 			$tpl = $this->processTemplate($this->mainTemplate, $tplparams);
 		}
 
@@ -144,8 +161,6 @@ class GalleryManagement
 
 		$this_page = $this->current . '?a=' . $this->a . '&id=' . $this->id;
 
-		$content_id = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];  // Get document id
-
 		$tplparams = array();
 
 		$parentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
@@ -214,25 +229,6 @@ class GalleryManagement
 			}
 		}
 
-		// Get contents of js script and replace necessary action URL
-		$tplparams = array(
-			'self' => urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)),
-			'action' => $this->current,
-			'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '"',
-			'uploadparams' => '"action": "upload", "js": "1", "content_id": "' . $content_id . '"',
-			'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
-			'base_url' => $modx->config['base_url'],
-			'content_id' => $content_id,
-			'thumbs' => urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)),
-			'upload_maxsize' => $modx->config['upload_maxsize']
-		);
-
-		$js = $this->processTemplate('js.tpl', $tplparams);
-
-		$tplparams = array(
-			'js' => $js
-		);
-
 		if (is_array($documents))  // Ensure data was returned
 		{
 			// Create the table header definition with each header providing a link to sort by that field
@@ -267,7 +263,7 @@ class GalleryManagement
 			$table_html = '<p class="first">'.$this->lang['no_children'].'</p>';
 		}
 
-		$tplparams['table'] =  $table_html;
+		$tplparams['table'] = $table_html;
 
 		if (isset($_GET['query']))
 			$tplparams['gallery'] = '';
@@ -295,17 +291,20 @@ class GalleryManagement
 		{
 			$info = $modx->fetchRow($result);
 
-			$target_dir = $this->config['savePath'] . '/' . $content_id . '/';
-
-			if (isset($_POST['cmdprev']))  // Go to previous page
+			if (!isset($_GET['onlygallery']))
 			{
+				$tplparams['title'] = $info['pagetitle'];
 				if ($info['parent'] > 0)
-					$modx->sendRedirect(html_entity_decode($this_page . '&action=view&content_id=' . $info['parent']));
+					$tplparams['back_url'] = htmlentities($this_page . '&action=view&content_id=' . $info['parent']);
 				else
-					$modx->sendRedirect(html_entity_decode($this_page . '&action=view'));
-				exit(0);
-			}
-			elseif (isset($_POST['cmdsort']))  // Update image sort order
+					$tplparams['back_url'] = htmlentities($this_page . '&action=view');
+				$galleryheader = $this->processTemplate($this->galleryHeaderTemplate, $tplparams);
+
+				$target_dir = $this->config['savePath'] . '/' . $content_id . '/';
+			} else
+				$galleryheader = '';
+
+			if (isset($_POST['cmdsort']))  // Update image sort order
 			{
 				$sortnum = 0; 
 				foreach ($_POST['sort'] as $key => $id)
@@ -371,6 +370,7 @@ class GalleryManagement
 				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
 			}
 
+			$tplparams['gallery_header'] = $galleryheader;
 			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id;
 			$tplparams['thumbs'] = $thumbs;
 

@@ -1,8 +1,5 @@
 [+upload_script+]
-
-<hr />
-<h2 class="second">[+lang.photos_for+] [+title+]</h2>
-
+[+gallery_header+]
 <form action="[+action+]" method="post" enctype="multipart/form-data">
 	
 <div id="uploadContainer">
@@ -17,7 +14,7 @@
 </div>
 
 <div class="submit">
-	<input type="submit" name="cmdprev" value="[+lang.back+]" title="[+lang.back_description+]" /> &nbsp; <input type="submit" id="cmdsort" name="cmdsort" value="[+lang.save_order+]" title="[+lang.save_order_description+]" />
+	<input type="submit" id="cmdsort" name="cmdsort" value="[+lang.save_order+]" title="[+lang.save_order_description+]" />
     <p>[+lang.sort_text+]</p>
 </div>
 </form>
