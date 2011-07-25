@@ -447,6 +447,12 @@ class GalleryManagement
 				$phpthumb->setParameter($keyname, $value);
 			}
 		}
+		//Set output format as input or jpeg if not supperted
+		$ext = strtolower(substr(strrchr($filename, '.'), 1));
+		if (in_array($ext,array('jpg','jpeg','png','gif')))
+			$phpthumb->setParameter('f',$ext);
+		else
+			$phpthumb->setParameter('f','jpeg');
 		$phpthumb->setParameter('config_document_root', rtrim($modx->config['base_path'],'/'));
 		foreach($params as $key=>$value)
 			$phpthumb->setParameter($key,$value);
