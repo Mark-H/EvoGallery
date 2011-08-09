@@ -17,7 +17,10 @@ $(document).ready(function(){
 		'onComplete': function(event, queueID, fileObj, response, data) {
             var uploadList = $('#uploadList');
             var info = eval('(' + response + ')');
-            uploadList.append("<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">[+lang.select+]</a></div><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
+            if (info['result']=='ok')
+				uploadList.append("<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">[+lang.select+]</a></div><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + "&filename=" + escape(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
+			else
+				alert('[+lang.upload_failed+]: ' + info['msg']);
         },
         'onAllComplete': function(){
             $(".thbButtons").hide();
@@ -92,7 +95,10 @@ $(document).ready(function(){
                    		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
                 		'onComplete': function(event, queueID, fileObj, response, data) {
 							var info = eval('(' + response + ')');
-                            $('.thumbPreview').empty().append('<img class="newimage" src="' + unescape('[+thumbs+]') + '&filename=' + escape(info['filename']) + '" alt="' + info['filename'] + '" />');
+							if (info['result']=='ok')
+								$('.thumbPreview').empty().append('<img class="newimage" src="' + unescape('[+thumbs+]') + '&filename=' + escape(info['filename']) + '" alt="' + info['filename'] + '" />');
+							else
+								alert('[+lang.upload_failed+]: ' + info['msg']);
 
                         }
                	    });

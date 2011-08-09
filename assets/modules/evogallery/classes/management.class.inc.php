@@ -814,7 +814,7 @@ class GalleryManagement
 		{
 			$result_ids[] = $row[$field];
 		}	
-		return json_encode($result_ids);
+		return json_encode(array('result'=>'ok','ids'=>$result_ids));
 	}	
 }
 ?>

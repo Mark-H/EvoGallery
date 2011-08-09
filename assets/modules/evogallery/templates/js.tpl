@@ -55,8 +55,11 @@ $(document).ready(function(){
 				if (params['mode']!='id') {
 					$.get("[+base_path+]action.php",
 							{[+params+], 'action': 'getids', 'mode': params['mode'], 'action_ids': params['action_ids']},
-							function(ids, textStatus){
-								$.startOperation(ids);
+							function(response, textStatus){
+								if (response['result']=='ok')
+									$.startOperation(response['ids']);
+								else
+									alert(response['msg']);
 							}, 'json'
 					);		
 				} else {

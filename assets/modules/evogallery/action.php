@@ -8,12 +8,6 @@ if (isset($_REQUEST[$site_sessionname]))
 
 startCMSSession();
 
-if (!$_SESSION['mgrValidated'])
-{
-	echo 'access denied';
-	die;
-}	
-	
 include_once "../../../manager/includes/document.parser.class.inc.php";
 $modx = new DocumentParser;
 $modx->loadExtension("ManagerAPI");
@@ -42,7 +36,17 @@ include_once('classes/management.class.inc.php');
 if (class_exists('GalleryManagement'))
 {
 	$manager = new GalleryManagement($parameters);
-	echo $manager->executeAction();
+	if (!$_SESSION['mgrValidated'])
+	{
+		echo json_encode(array('result'=>'error','msg'=>$manager->lang['access_denied']));
+		die;
+	}	
+	$res = $manager->executeAction();
+	if ($res===TRUE)
+		echo json_encode(array('result'=>'ok'));
+	elseif ($res===FALSE)
+		echo json_encode(array('result'=>'error','msg'=>$manager->lang['operation_error']));
+	else echo $res;	
 }	
 else
 	$modx->logEvent(1, 3, 'Error loading Portfolio Galleries management module');

@@ -52,6 +52,8 @@
 	$_lang['move_to'] = 'move to document';
 	$_lang['start'] = 'Start';
 	$_lang['select_document'] = 'Please click parent document from the MAIN DOCUMENT TREE in that you\'d like to move';
+	$_lang['upload_failed'] = 'Upload failed';
+	$_lang['access_denied'] = 'access denied';
 
 	$_lang['mm_tab_name'] = 'Photos';
 	$_lang['mm_save_required'] = 'You must save this page before you can manage the photos associated with it.';
