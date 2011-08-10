@@ -17,10 +17,19 @@
 	[+js+]
 </head>
 <body>
+<div id="actions-popup">
+	<div id="galcontrols">
+		<h4>[+lang.in_all_gallery+]:</h4><ul><li><a id="cmdAllDel" href="#">[+lang.delete_all+]</a></li><li><a id="cmdAllRegenerate" href="#">[+lang.regenerate_all+]</a></li></ul>
+	</div>
+	<div id="doccontrols">
+		<h4>[+lang.in_this_doc+]:</h4><ul><li><a id="cmdCntDel" href="#">[+lang.delete_images+]</a></li><li><a id="cmdCntRegenerate" href="#">[+lang.regenerate_images+]</a></li><li><a id="cmdCntMoveTo" href="#">[+lang.move_to+]</a></li></ul>
+	</div>
+</div>
+	<div id="actions-menu" class="awesome">[+lang.actions+]</div>
 [+content+]
 </div>
 <div class="overlay" id="overlay"> 
-    <div class="contentWrap"></div>  
+	  <div class="contentWrap"></div>  
 </div>
 <div class="popup" id="operation-popup"> 
     <div class="status">[+lang.please_wait+]</div>

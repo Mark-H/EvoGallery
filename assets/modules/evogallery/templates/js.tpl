@@ -1,5 +1,4 @@
 <script type="text/javascript" charset="utf-8">
-<!--
 $(document).ready(function(){
     $.execAction = function(obj, params) {
 		var overlay = $(obj).overlay({
@@ -88,7 +87,23 @@ $(document).ready(function(){
         return false;
     });
 
+	$('#actions-menu').click(function() {
+		var sp = $('#actions-popup');
+		sp.css({
+			top: $(this).offset().top + $(this).outerHeight() + 'px',  
+			left: ($(this).offset().left + $(this).outerWidth() - sp.outerWidth()) + 'px'
+		});  
+		sp.toggle();
+		return false;
+	});
+	$('body, #actions-popup a').click(function() {
+		$('#actions-popup').hide();
+	});
+
+	if (!$('#subdocs').length)
+		$('#galcontrols').hide();
+	if (!$('#uploadContainer').length)
+		$('#doccontrols').hide();
 
 });
--->
 </script>

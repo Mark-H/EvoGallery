@@ -34,10 +34,10 @@
 	$_lang['click_view_categories'] = 'Click to view products/categories';
 	$_lang['in_this_doc'] = 'In this document selected images or all';
 	$_lang['in_all_gallery'] = 'In gallery';
-	$_lang['delete_all'] = 'delete all images';
-	$_lang['regenerate_all'] = 'regenerate all images';
-	$_lang['delete_images'] = 'delete images';
-	$_lang['regenerate_images'] = 'regenerate images';
+	$_lang['delete_all'] = 'Delete all images';
+	$_lang['regenerate_all'] = 'Regenerate all images';
+	$_lang['delete_images'] = 'Delete images';
+	$_lang['regenerate_images'] = 'Regenerate images';
 	$_lang['delete_indoc_confirm'] = 'Are you sure you want to delete all/selected images in this document?';
 	$_lang['delete_all_confirm'] = 'Are you sure you want to delete all images in gallery\n(It may take long time)?';
 	$_lang['regenerate_indoc_confirm'] = 'Are you sure you want to regenerate all/selected images in this document?';
@@ -49,11 +49,12 @@
 	$_lang['close'] = 'Close';
 	$_lang['selectall'] = 'Select all';
 	$_lang['unselectall'] = 'Unselect all';
-	$_lang['move_to'] = 'move to document';
+	$_lang['move_to'] = 'Move to document';
 	$_lang['start'] = 'Start';
 	$_lang['select_document'] = 'Please click parent document from the MAIN DOCUMENT TREE in that you\'d like to move';
 	$_lang['upload_failed'] = 'Upload failed';
 	$_lang['access_denied'] = 'access denied';
+	$_lang['actions'] = 'Actions';
 
 	$_lang['mm_tab_name'] = 'Photos';
 	$_lang['mm_save_required'] = 'You must save this page before you can manage the photos associated with it.';

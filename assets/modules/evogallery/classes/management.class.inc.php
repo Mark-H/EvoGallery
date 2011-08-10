@@ -302,7 +302,7 @@ class GalleryManagement
 
 				$target_dir = $this->config['savePath'] . '/' . $content_id . '/';
 			} else
-				$galleryheader = '';
+				$galleryheader = '<div id="content">';
 
 			if (isset($_POST['cmdsort']))  // Update image sort order
 			{

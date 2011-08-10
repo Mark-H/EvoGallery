@@ -13,6 +13,7 @@ a:hover { text-decoration: underline; }
 h2 { margin: 0 0 12px 0; padding: 0; color: #545454; font-size: 15px; font-weight: bold; line-height: 1em; }
 h2.second { margin: 0 0 15px 0; }
 h3 { margin: 5px 0; padding: 0; color: #5a5a5a; font-size: 13px; font-weight: bold; text-decoration: underline; }
+h4 { margin: 5px 0; padding: 0; color: #5a5a5a; font-size: 13px; font-weight: bold;}
 
 hr { margin: 16px 0 14px 0; clear: both; border: 0; color: #dadada; background-color: #dadada; height: 1px; }
 
@@ -181,3 +182,7 @@ div.popup .progress {
 .thbSelect a { float: left; display: block; height: 21px; width: 20px; margin: 2px 6px 0 0; background: transparent url(../images/checkoff.png) no-repeat; text-indent: -9999px; }
 .selected .thbSelect a { background: transparent url(../images/checkon.png) no-repeat; }
 
+#actions-menu {float: right; margin: 7px 10px 0 10px;}
+#actions-popup {z-index: 999; padding: 5px; background: #FDFDFD; border: 1px solid #E3E3E3; width: 300px; position: absolute; display: none;}
+#actions-popup ul {margin: 10px 5px; padding: 0; list-style: none;}
+#actions-popup ul li {margin: 5px 0;}

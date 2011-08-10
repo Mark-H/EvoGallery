@@ -19,10 +19,6 @@
 </div>
 </form>
 
-<div class="doccontrols">
-	[+lang.in_this_doc+]: <a id="cmdCntDel" href="#">[+lang.delete_images+]</a> | <a id="cmdCntRegenerate" href="#">[+lang.regenerate_images+]</a> | <a id="cmdCntMoveTo" href="#">[+lang.move_to+]</a>
-</div>
-
 <div class="popupclose" id="moveto-popup"> 
 	<p id="movetarget_doc">[+lang.select_document+]</p>
 	<input id="movetarget_id" type="hidden" value="0"/>
