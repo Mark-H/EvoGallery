@@ -162,10 +162,10 @@ $(document).ready(function(){
 				closeOnEsc: true,
 				closeOnClick: false,
 				onLoad: function() {
-					parent.tree.ca = 'move';
+					top.tree.ca = 'move';
 				},
 				onClose: function() {
-					parent.tree.ca = '';
+					top.tree.ca = '';
 					window.location.reload();
 				}
 			});
@@ -188,7 +188,7 @@ $(document).ready(function(){
 });
 
 
-function setMoveValue(pId, pName) {
+top.main.setMoveValue = function(pId, pName) {
 	if (pId!=0) {
 		$("#movetarget_id").val(pId);
 		$('#movetarget_doc').html("Document: <strong>" + pId + "</strong> (" + pName + ")");
