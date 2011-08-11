@@ -280,7 +280,7 @@ if (isset ($_POST['module'])) {
 			$rs = mysql_query("SELECT * FROM $dbase.`" . $table_prefix . "site_modules` WHERE name='$name'", $sqlParser->conn);
 			if (mysql_num_rows($rs)) {
 			    $row = mysql_fetch_assoc($rs);
-			    $props = propUpdate($properties,$row['properties']);
+			    $props = mysql_real_escape_string(propUpdate($properties,$row['properties']));
 			    if (!@ mysql_query("UPDATE $dbase.`" . $table_prefix . "site_modules` SET modulecode='$module', description='$desc', properties='$props', enable_sharedparams='$shared', guid='$guid' WHERE name='$name';", $sqlParser->conn)) {
 					echo "<p>" . mysql_error() . "</p>";
 					return;
