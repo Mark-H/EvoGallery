@@ -6,6 +6,7 @@
  * @category	plugin
  * @version	1.0 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
+ * @internal	@guid 23636a8c613426979b9dea1ff0415abf
  * @internal    @events OnEmptyTrash
  * @internal    @modx_category Manager and Admin
  */
@@ -20,7 +21,7 @@ $e =& $modx->event;
 switch ($e->name ) {
     case 'OnEmptyTrash':
 		$manager->deleteImages('contentid',$ids);
-        break ;
+		break ;
     default:
         return ;
 }

@@ -281,7 +281,7 @@ if (isset ($_POST['module'])) {
 			if (mysql_num_rows($rs)) {
 			    $row = mysql_fetch_assoc($rs);
 			    $props = propUpdate($properties,$row['properties']);
-			    if (!@ mysql_query("UPDATE $dbase.`" . $table_prefix . "site_modules` SET modulecode='$module', description='$desc', properties='$props', enable_sharedparams='$shared' WHERE name='$name';", $sqlParser->conn)) {
+			    if (!@ mysql_query("UPDATE $dbase.`" . $table_prefix . "site_modules` SET modulecode='$module', description='$desc', properties='$props', enable_sharedparams='$shared', guid='$guid' WHERE name='$name';", $sqlParser->conn)) {
 					echo "<p>" . mysql_error() . "</p>";
 					return;
 				}
@@ -426,6 +426,35 @@ if (isset ($_POST['snippet'])) {
 		}
 	}
 }
+
+/**** Add EvoGallery Plugin to Module ****/
+// get EvoGallery module id
+$ds = mysql_query("SELECT id FROM `".$sqlParser->prefix."site_modules` WHERE name='EvoGallery' AND disabled=0");
+if(!$ds) {
+	echo "An error occurred while executing a query: ".mysql_error();
+}
+else {
+	$row = mysql_fetch_assoc($ds);
+	$moduleid=$row["id"];
+}
+// get plugin id
+$ds = mysql_query("SELECT id FROM `".$sqlParser->prefix."site_plugins` WHERE name='EvoGallery' AND disabled=0");
+if(!$ds) {
+	echo "An error occurred while executing a query: ".mysql_error();
+}
+else {
+	$row = mysql_fetch_assoc($ds);
+	$pluginid=$row["id"];
+}
+// setup plugin as module dependency
+$ds = mysql_query("SELECT module FROM `".$sqlParser->prefix."site_module_depobj` WHERE module='$moduleid' AND resource='$pluginid' AND type='30' LIMIT 1");
+if(!$ds) {
+	echo "An error occurred while executing a query: ".mysql_error();
+}
+elseif (mysql_num_rows($ds)==0){
+	mysql_query("INSERT INTO `".$sqlParser->prefix."site_module_depobj` (module, resource, type) VALUES('$moduleid','$pluginid',30)");
+}
+
 
 // remove any locks on the manager functions so initial manager login is not blocked
 mysql_query("TRUNCATE TABLE `".$table_prefix."active_users`");
