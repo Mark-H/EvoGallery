@@ -1,7 +1,7 @@
 <?php
 	$_lang['title'] = 'Заголовок';
 	$_lang['description'] = 'Описание';
-	$_lang['keywords'] = 'Ключевые слова';
+	$_lang['keywords'] = 'Ярлыки';
 	$_lang['update'] = 'Обновить';
 	$_lang['update_image'] = 'Заменить изображение';
 	$_lang['upload_file'] = 'Загрузить файл';

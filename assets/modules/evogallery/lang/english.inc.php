@@ -1,7 +1,7 @@
 <?php
 	$_lang['title'] = 'Title';
 	$_lang['description'] = 'Description';
-	$_lang['keywords'] = 'Keywords';
+	$_lang['keywords'] = 'Tags';
 	$_lang['update'] = 'Update';
 	$_lang['update_image'] = 'Update Image';
 	$_lang['upload_file'] = 'Upload File';
