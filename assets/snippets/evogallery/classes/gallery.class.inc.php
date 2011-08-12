@@ -116,7 +116,10 @@ class Gallery
 				{
 					$image = $modx->fetchRow($image_result);
 					foreach ($image as $name => $value)
-						$item_phx->setPHxVariable($name, trim($value));
+						if ($name=='filename')
+							$item_phx->setPHxVariable($name, rawurlencode(trim($value)));
+						else
+							$item_phx->setPHxVariable($name, trim($value));
 					$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['id'] . '/');
 					$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['id'] . '/thumbs/');
 					$item_phx->setPHxVariable('original_dir', $this->config['galleriesUrl'] . $row['id'] . '/original/');
@@ -226,7 +229,10 @@ class Gallery
 			{
 				$item_phx = new PHxParser();
 				foreach ($row as $name => $value)
-					$item_phx->setPHxVariable($name, $value);
+					if ($name=='filename')
+						$item_phx->setPHxVariable($name, rawurlencode(trim($value)));
+					else
+						$item_phx->setPHxVariable($name, trim($value));
 				$imgsize = getimagesize($modx->config['base_path'] . $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']); 
 				$item_phx->setPHxVariable('width',$imgsize[0]); 
 				$item_phx->setPHxVariable('height',$imgsize[1]); 
@@ -282,7 +288,10 @@ class Gallery
 			{
 				$item_phx = new PHxParser();
 				foreach ($row as $name => $value)
-					$item_phx->setPHxVariable($name, $value);
+					if ($name=='filename')
+						$item_phx->setPHxVariable($name, rawurlencode(trim($value)));
+					else
+						$item_phx->setPHxVariable($name, trim($value));
 				$item_phx->setPHxVariable('images_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/');
 				$item_phx->setPHxVariable('thumbs_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/thumbs/');
 				$item_phx->setPHxVariable('original_dir', $this->config['galleriesUrl'] . $row['content_id'] . '/original/');
