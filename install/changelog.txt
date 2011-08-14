@@ -1,6 +1,40 @@
 This file shows the changes in recent releases of EvoGallery. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
+EvoGallery 1.1 Beta 1 
+===================================
+--------------------------------------------
+Security:
+--------------------------------------------
+* Added check MODX manager authorization when upload image
+--------------------------------------------
+Bugfixes:
+--------------------------------------------
+* Fixed bug when call snippet with tags and &docid='*'
+* Fixed bug sort over 128 images
+* Fixed bug file size upload error
+* Fixed wrong rederect when install
+* Fixed bug with special characters in filenames
+--------------------------------------------
+Additional Improvements & Updates:
+--------------------------------------------
+* Added plugin which delete images on empty cache
+* Added delete images, regenerate thumbnails, move images to different document in all gallery, in current document or selected images
+* Added option to keep orininal images
+* Added pagination support
+* Added support random filenames when upload images
+* Added support transalias filenames when upload images
+* Rename keywords to tags
+* Move configuration from php file to module configuration
+* Integrate with PHPThumb
+* Update Uploadify to last stable version
+* Change default sortby to sortorder
+* Combine upload and replace script in one file
+* Added ManagerManager widget
+* Added russian l10n
+* Added i18n support
+
+
 EvoGallery 1.0 Beta 1 (May 17, 2010 02:47:00 PM)
 ===================================
 --------------------------------------------
