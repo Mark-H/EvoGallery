@@ -5,7 +5,7 @@
  * Gallery Management Module
  * 
  * @category	module
- * @version 	1.0 Beta 1
+ * @version 	1.1 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
  * @internal	@properties	&docId=Root Document ID;integer;0 &phpthumbImage=PHPThumb config for images in JSON;textarea;{'w': 940, 'h': 940, 'q': 95} &phpthumbThumb=PHPThumb config for thumbs in JSON;textarea;{'w': 175, 'h': 175, 'q': 75} &savePath=Save path;string;assets/galleries &keepOriginal=Keep original images;list;Yes,No;Yes &randomFilenames=Random filenames;list;Yes,No;No 
  * @internal	@guid 23636a8c613426979b9dea1ff0415abf

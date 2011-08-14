@@ -4,7 +4,7 @@
  * Plugin for delete images on empty trash
  *
  * @category	plugin
- * @version	1.0 Beta 1
+ * @version	1.1 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
  * @internal	@guid 23636a8c613426979b9dea1ff0415abf
  * @internal    @events OnEmptyTrash

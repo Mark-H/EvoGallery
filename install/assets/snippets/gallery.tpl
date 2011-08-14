@@ -5,7 +5,7 @@
  * Generates sortable listing of galleries, with full templating control
  *
  * @category	snippet
- * @version 	1.0 Beta 1
+ * @version 	1.1 Beta 1
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
  * @internal	@properties
  * @internal	@modx_category Content
