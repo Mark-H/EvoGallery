@@ -305,7 +305,7 @@ class GalleryManagement
 			} else
 				$galleryheader = '<div id="content">';
 
-			if (isset($_POST['cmdsort']))  // Update image sort order
+			if (isset($_POST['cmdsort']) && isset($_POST['sort']))  // Update image sort order
 			{
 				$sortnum = 0; 
 				foreach ($_POST['sort'] as $key => $id)
