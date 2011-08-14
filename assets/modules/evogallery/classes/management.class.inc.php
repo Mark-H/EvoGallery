@@ -30,6 +30,7 @@ class GalleryManagement
 		global $modx;
 
 		$this->config = $params;
+		$this->config['urlPath'] = $modx->config['base_url'].rtrim($this->config['savePath'],'/');
 		$this->config['savePath'] = $modx->config['base_path'].rtrim($this->config['savePath'],'/');
 
 		$this->mainTemplate = 'template.html.tpl';
@@ -44,7 +45,6 @@ class GalleryManagement
 		$this->current = (($_SERVER['HTTPS'] == 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $modx->config['base_url'] . 'manager/index.php';
 		$this->a = $_GET['a'];
 		$this->id = $_GET['id'];
-		$this->thumbHandler = '../assets/modules/evogallery/thumb_handler.php?';
 		
 		$this->loadLanguage();
 	}
@@ -105,6 +105,7 @@ class GalleryManagement
 		$this_page = $this->current . '?a=' . $this->a . '&amp;id=' . $this->id;
 
 		$contentId = isset($_GET['content_id']) ? intval($_GET['content_id']) : $this->config['docId'];
+		$url = $modx->config['base_url'].$this->config['savePath'];
 		$id = isset($_GET['edit']) ? intval($_GET['edit']) : '';
 
 		$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), "id = '" . $id . "'");
@@ -140,7 +141,7 @@ class GalleryManagement
 			'action' => $this_page . '&action=view&content_id=' . $contentId,
 			'id' => $info['id'],
 			'filename' => urlencode($info['filename']),
-			'image' => $this->thumbHandler . "content_id=" . $contentId . "&filename=" . urlencode($info['filename']),
+			'image' => $this->config['urlPath'] .'/' .$contentId . '/thumbs/' . rawurlencode($info['filename']),
 			'title' => $info['title'],
 			'description' => $info['description'],
 			'keywords' => $info['keywords'],
@@ -350,7 +351,7 @@ class GalleryManagement
 				'base_path' => $modx->config['base_url'] . 'assets/modules/evogallery/',
 				'base_url' => $modx->config['base_url'],
 				'content_id' => $content_id,
-				'thumbs' => urlencode(html_entity_decode($this->thumbHandler . 'content_id=' . $content_id)),
+				'thumbs' => $this->config['urlPath'] . '/' . $content_id . '/thumbs/',
 				'upload_maxsize' => $modx->config['upload_maxsize']
 			);
 
@@ -367,7 +368,7 @@ class GalleryManagement
 			$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), 'content_id=' . $content_id, 'sortorder ASC');
 			while ($row = $modx->fetchRow($result))
 			{
-				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->thumbHandler . "content_id=" . $content_id . "&filename=" . urlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
+				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->config['urlPath'] . '/' . $content_id . '/thumbs/' . rawurlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
 			}
 
 			$tplparams['gallery_header'] = $galleryheader;
