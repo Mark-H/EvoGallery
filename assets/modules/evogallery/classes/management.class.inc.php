@@ -344,7 +344,7 @@ class GalleryManagement
 
 			// Get contents of upload script and replace necessary action URL
 			$tplparams = array(
-				'self' => urlencode(html_entity_decode($this_page . '&action=upload&content_id=' . $content_id)),
+				'self' => urlencode(html_entity_decode($this_page . '&content_id=' . $content_id)),
 				'action' => $this->current,
 				'params' => '"id": "' . $this->id . '", "a": "' . $this->a . '", "' . session_name() . '": "' . session_id() . '"',
 				'uploadparams' => '"action": "upload", "js": "1", "content_id": "' . $content_id . '"',
