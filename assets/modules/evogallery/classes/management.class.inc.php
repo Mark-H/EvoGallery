@@ -612,10 +612,13 @@ class GalleryManagement
 			$target_fname = $_FILES['Filedata']['name'];
 			$keepOriginal = $this->config['keepOriginal']=='Yes';
 			
-			if($modx->config['clean_uploaded_filename']) {
-				$nameparts = explode('.', $target_fname);
-				$nameparts = array_map(array($modx, 'stripAlias'), $nameparts);
-				$target_fname = implode('.', $nameparts);
+			$path_parts = pathinfo($target_fname);
+			
+			if ($this->config['randomFilenames']=='Yes') {
+				$target_fname = $this->getRandomString(8).'.'.$path_parts['extension'];
+			}
+			elseif ($modx->config['clean_uploaded_filename']) {
+				$target_fname = $modx->stripAlias($path_parts['filename']).'.'.$path_parts['extension'];
 			}
 			
 			$target_file = $target_dir . $target_fname;
@@ -815,6 +818,24 @@ class GalleryManagement
 			$result_ids[] = $row[$field];
 		}	
 		return json_encode(array('result'=>'ok','ids'=>$result_ids));
-	}	
+	}
+
+	/**
+	* Generate random strings, copied from MaxiGallery
+	*/
+	function getRandomString($length){
+		$str = "";
+		$salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		srand((double)microtime()*1000000);
+		$i = 0;
+		while ($i <= $length) {
+			$num = rand(0,61);
+			$tmp = substr($salt, $num, 1);
+			$str = $str . $tmp;
+			$i++;
+		}
+		return $str;
+	}
+
 }
 ?>
