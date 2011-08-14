@@ -15,11 +15,10 @@ $(document).ready(function(){
 		'buttonText': '[+lang.select_files+]',
 		'cancelImg': '[+base_path+]js/uploadify/cancel.png',
 		'onComplete': function(event, queueID, fileObj, response, data) {
-            var uploadList = $('#uploadList');
             var info = eval('(' + response + ')');
             if (info['result']=='ok') {
-				var onlygallery = $.urlParam('onlygallery', location.href)?"&onlygallery=1":"";
-				uploadList.append("<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">[+lang.select+]</a></div><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + onlygallery + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + encodeURI(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
+				var onlygallery = $.urlParam('onlygallery', location.href)=='1'?"&onlygallery=1":"";
+				$('#uploadList').append("<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">[+lang.select+]</a></div><div class=\"thbButtons\"><a href=\"" + unescape('[+self+]') + "&action=edit&content_id=[+content_id+]&edit=" + info['id'] + onlygallery + "\" class=\"edit\">[+lang.edit+]</a><a href=\"" + unescape('[+self+]') + "&delete=" + info['id'] + "\" class=\"delete\">[+lang.delete+]</a></div><img src=\"" + unescape('[+thumbs+]') + encodeURI(info['filename']) + "\" alt=\"" + info['filename'] + "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" + info['id'] + "\" /></li>");
 			}	
 			else
 				alert('[+lang.upload_failed+]: ' + info['msg']);
@@ -27,12 +26,16 @@ $(document).ready(function(){
         'onAllComplete': function(){
             $(".thbButtons").hide();
             $("li").not('.selected').children(".thbSelect").hide();
+			if ($("#uploadList li").length) {
+				$("#selectallcontrols").show();
+				$("#sortcontrols").show();
+			}	
         }
 	});
 
 	$.urlParam = function(name, link){
 		var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(link);
-		return results[1] || 0;
+		return (results && results[1]) || 0;
 	}
 
     $('#uploadFiles').click(function(){
@@ -60,7 +63,11 @@ $(document).ready(function(){
         $(".thbButtons .delete").live("click", function(event){
             if(confirm('[+lang.delete_confirm+]')){
                 $.get($(this).attr('href'));
-                $(this).parent().parent('li').remove();            
+                $(this).parent().parent('li').remove();
+				if (!$("#uploadList li").length) {
+					$("#selectallcontrols").hide();
+					$("#sortcontrols").hide();
+				}	
             }
             return false;
         });
@@ -189,6 +196,12 @@ $(document).ready(function(){
 			});
 		});
 	}
+
+	if ($("#uploadList li").length) {
+		$("#selectallcontrols").show();
+		$("#sortcontrols").show();
+	}	
+
 });
 
 

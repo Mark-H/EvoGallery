@@ -10,10 +10,10 @@
 <p id="sortdesc">[+lang.sort_description+]</p>
 <div id="uploadFiles"><ul id="uploadList">[+thumbs+]</ul></div>
 <div id="selectallcontrols">
-<div class="selectall"><a id="selectall" href="#">[+lang.selectall+]</a> | <a id="unselectall" href="#">[+lang.unselectall+]</a></div>
+	<a id="selectall" href="#">[+lang.selectall+]</a> | <a id="unselectall" href="#">[+lang.unselectall+]</a>
 </div>
 
-<div class="submit">
+<div id="sortcontrols" class="submit">
 	<input type="submit" id="cmdsort" name="cmdsort" value="[+lang.save_order+]" title="[+lang.save_order_description+]" />
     <p>[+lang.sort_text+]</p>
 </div>
