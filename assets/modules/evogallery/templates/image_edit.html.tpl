@@ -1,6 +1,6 @@
 <div id="content">
 
-<form action="[+action+]" method="post" target="main">
+<form action="[+action+]" method="post">
 <input type="hidden" name="edit" value="[+id+]" />
 
 <p class="thumbPreview">

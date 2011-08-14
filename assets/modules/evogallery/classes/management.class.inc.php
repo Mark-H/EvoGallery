@@ -138,7 +138,7 @@ class GalleryManagement
 		$keyword_tagList = '<ul class="mmTagList" id="keyword_tagList">'.$lis.'</ul>';
 
 		$tplparams = array(
-			'action' => $this_page . '&action=view&content_id=' . $contentId,
+			'action' => $this_page . '&action=view&content_id=' . $contentId . (isset($_GET['onlygallery'])?'&onlygallery=1':''),
 			'id' => $info['id'],
 			'filename' => urlencode($info['filename']),
 			'image' => $this->config['urlPath'] .'/' .$contentId . '/thumbs/' . rawurlencode($info['filename']),
@@ -368,11 +368,11 @@ class GalleryManagement
 			$result = $modx->db->select('id, filename, title, description, keywords', $modx->getFullTableName($this->galleriesTable), 'content_id=' . $content_id, 'sortorder ASC');
 			while ($row = $modx->fetchRow($result))
 			{
-				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . "\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->config['urlPath'] . '/' . $content_id . '/thumbs/' . rawurlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
+				$thumbs .= "<li><div class=\"thbSelect\"><a class=\"select\" href=\"#\">".$this->lang['select']."</a></div><div class=\"thbButtons\"><a href=\"" . $this_page . "&action=edit&content_id=$content_id&edit=" . $row['id'] . (isset($_GET['onlygallery'])?"&onlygallery=1":"") ."\" class=\"edit\">".$this->lang['edit']."</a><a href=\"$this_page&action=view&content_id=$content_id&delete=" . $row['id'] . "\" class=\"delete\">".$this->lang['delete']."</a></div><img src=\"" . $this->config['urlPath'] . '/' . $content_id . '/thumbs/' . rawurlencode($row['filename']) . "\" alt=\"" . htmlentities(stripslashes($row['filename'])) . "\" class=\"thb\" /><input type=\"hidden\" name=\"sort[]\" value=\"" . $row['id'] . "\" /></li>\n";
 			}
 
 			$tplparams['gallery_header'] = $galleryheader;
-			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id;
+			$tplparams['action'] = $this_page . '&action=view&content_id=' . $content_id . (isset($_GET['onlygallery'])?'&onlygallery=1':'');
 			$tplparams['thumbs'] = $thumbs;
 
 			$tpl = $this->processTemplate($this->uploadTemplate, $tplparams);
