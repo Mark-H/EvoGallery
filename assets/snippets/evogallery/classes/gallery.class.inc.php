@@ -233,7 +233,7 @@ class Gallery
 						$item_phx->setPHxVariable($name, rawurlencode(trim($value)));
 					else
 						$item_phx->setPHxVariable($name, trim($value));
-				$imgsize = getimagesize($modx->config['base_path'] . $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']); 
+				$imgsize = getimagesize($this->config['galleriesPath'] . $row['content_id'] . '/' . $row['filename']); 
 				$item_phx->setPHxVariable('width',$imgsize[0]); 
 				$item_phx->setPHxVariable('height',$imgsize[1]); 
 				$item_phx->setPHxVariable('image_withpath', $this->config['galleriesUrl'] . $row['content_id'] . '/' . $row['filename']);
