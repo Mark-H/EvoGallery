@@ -113,7 +113,7 @@ $params['show'] = isset($show)?$show:'20';
 $params['paginateNextText'] = isset($paginateNextText)?$paginateNextText:'Next';
 	// Text for next label
 
-$params['paginatePreviousText'] = isset($paginateNextText)?$paginatePreviousText:'Previous';
+$params['paginatePreviousText'] = isset($paginatePreviousText)?$paginatePreviousText:'Previous';
 	// Text for previous label
 
 $params['paginateSplitterCharacter'] = isset($paginateSplitterCharacter)?$modx->getChunk($paginateSplitterCharacter):"|";
