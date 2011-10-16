@@ -177,8 +177,8 @@ div.popup .progress {
 	padding: 15px 0;
 }
 
-#sortcontrols {display: none;}
-#selectallcontrols {clear: left; margin-top: 5px; display: none;}
+#sortcontrols {}
+#selectallcontrols {clear: left; margin-top: 5px;}
 .thbSelect { position: absolute; top: 0; left: 0; z-index: 150; }
 .thbSelect a { float: left; display: block; height: 21px; width: 20px; margin: 2px 6px 0 0; background: transparent url(../images/checkoff.png) no-repeat; text-indent: -9999px; }
 .selected .thbSelect a { background: transparent url(../images/checkon.png) no-repeat; }

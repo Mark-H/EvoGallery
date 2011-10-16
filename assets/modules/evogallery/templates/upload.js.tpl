@@ -26,9 +26,9 @@ $(document).ready(function(){
         'onAllComplete': function(){
             $(".thbButtons").hide();
             $("li").not('.selected').children(".thbSelect").hide();
-			if ($("#uploadList li").length) {
-				$("#selectallcontrols").show();
-				$("#sortcontrols").show();
+			if (!$("#uploadList li").length) {
+				$("#selectallcontrols").hide();
+				$("#sortcontrols").hide();
 			}	
         }
 	});
@@ -197,13 +197,14 @@ $(document).ready(function(){
 		});
 	}
 
-	if ($("#uploadList li").length) {
-		$("#selectallcontrols").show();
-		$("#sortcontrols").show();
-	}	
-
 });
 
+$(window).load(function() {
+	if (!$("#uploadList li").length) {
+		$("#selectallcontrols").hide();
+		$("#sortcontrols").hide();
+	}	
+});
 
 top.main.setMoveValue = function(pId, pName) {
 	if (pId!=0) {
