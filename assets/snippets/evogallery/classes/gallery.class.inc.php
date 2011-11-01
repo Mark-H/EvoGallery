@@ -330,6 +330,8 @@ class Gallery
 					$register = 2;
 				elseif (strpos($line, '@EXTSCRIPT') === 0)
 					$register = 3;
+				elseif (strpos($line, '@EXTCSS') === 0)
+					$register = 4;
 				else
 				{
 					switch ($register)
@@ -342,6 +344,9 @@ class Gallery
 							break;
 						case 3:
 							$modx->regClientStartupScript($line);
+							break;
+						case 4:
+							$modx->regClientCSS($line);
 							break;
 					}
 				}
