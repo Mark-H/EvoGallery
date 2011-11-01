@@ -61,7 +61,7 @@ class Gallery
 		{
 			if (strpos($this->config['docId'], ',') !== false)
 			{
-				$docSelect = 'parent IN ('.explode(',', $this->config['docId']).')';
+				$docSelect = 'parent IN ('.$this->config['docId'].')';
 			}
 			else
 				$docSelect = 'parent = ' . $this->config['docId'];
