@@ -71,7 +71,7 @@ class Gallery
 			$excludeDocs = '';
 			if (strpos($this->config['excludeDocs'], ',') !== false)
 			{
-				$excludeDocs = 'parent NOT IN ('.explode(',', $this->config['excludeDocs']).')';
+				$excludeDocs = 'parent NOT IN ('.$this->config['excludeDocs'].')';
 			}
 			else
 				$excludeDocs .= 'parent != ' . $this->config['excludeDocs'];
