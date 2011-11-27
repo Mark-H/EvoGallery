@@ -91,7 +91,9 @@ class Gallery
 	
 		if ($this->config['paginate']) {
 			//Retrieve total records
-			$totalRows = $modx->db->getValue('select count(*) from '.$modx->getFullTableName('site_content').$filter. (!empty($this->config['limit']) ? 'limit '.$this->config['limit'] : ""));
+			$totalRows = $modx->db->getValue('select count(*) from '.$modx->getFullTableName('site_content').$filter);
+			if (!empty($this->config['limit']) && $totalRows>$this->config['limit'])
+				$totalRows = $this->config['limit'];
 			$limit = $this->paginate($totalRows);
 			if (!empty($limit))
 				$limit = ' limit '.$limit;
