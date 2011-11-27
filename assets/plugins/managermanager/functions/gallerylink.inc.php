@@ -49,7 +49,7 @@ function mm_galleryLink($fields, $roles='', $templates='', $moduleid=''){
 
                 	$output .= 'var gl'.$mm_fields[$field]['fieldname'].' = $j("'.$mm_fields[$field]['fieldtype'].'[name='.$mm_fields[$field]['fieldname'].']");'."\n";
                 	$output .= 'if(pid'.$mm_fields[$field]['fieldname'].' != \'false\'){'."\n";
-                    $output .= '    var galleryLink = $j(\'<a href="/manager/index.php?a=112&id='.$moduleid.'&action=view&content_id=\'+pid'.$mm_fields[$field]['fieldname'].'+\'">Manage Photos</a>\').insertAfter(gl'.$mm_fields[$field]['fieldname'].');'."\n";
+                    $output .= '    var galleryLink = $j(\'<a href="' . $modx->config['base_url'] . 'manager/index.php?a=112&id='.$moduleid.'&action=view&content_id=\'+pid'.$mm_fields[$field]['fieldname'].'+\'">Manage Photos</a>\').insertAfter(gl'.$mm_fields[$field]['fieldname'].');'."\n";
                 	$output .= '} else {'."\n";
                     $output .= '    var galleryLink = $j(\'<p class="warning">You must save this page before you can manage the photos associated with it.</p>\').insertAfter(gl'.$mm_fields[$field]['fieldname'].');'."\n";
                 	$output .= '}'."\n";
