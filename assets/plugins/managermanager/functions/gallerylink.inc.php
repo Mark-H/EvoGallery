@@ -53,7 +53,7 @@ function mm_galleryLink($fields, $roles='', $templates='', $moduleid=''){
                 	$output .= '} else {'."\n";
                     $output .= '    var galleryLink = $j(\'<p class="warning">You must save this page before you can manage the photos associated with it.</p>\').insertAfter(gl'.$mm_fields[$field]['fieldname'].');'."\n";
                 	$output .= '}'."\n";
-                    $output .= 'gl'.$mm_fields[$field]['fieldname'].'.remove();'."\n";
+					$output .= 'gl'.$mm_fields[$field]['fieldname'].'.hide();'."\n";
 				} 				
 				break;
 			}
