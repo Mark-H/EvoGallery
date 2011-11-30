@@ -177,7 +177,7 @@ class Gallery
 		{
 			if (strpos($this->config['docId'], ',') !== false)
 			{
-				$docSelect = 'content_id IN ('.explode(',', $this->config['docId']).')';
+				$docSelect = 'content_id IN ('.$this->config['docId'].')';
 			}
 			else
 				$docSelect = 'content_id = ' . $this->config['docId'];
@@ -187,7 +187,7 @@ class Gallery
 			$excludeDocs = '';
 			if (strpos($this->config['excludeDocs'], ',') !== false)
 			{
-				$excludeDocs = 'content_id NOT IN ('.explode(',', $this->config['excludeDocs']).')';
+				$excludeDocs = 'content_id NOT IN ('.',', $this->config['excludeDocs'].')';
 			}
 			else
 				$excludeDocs .= 'content_id != ' . $this->config['excludeDocs'];
