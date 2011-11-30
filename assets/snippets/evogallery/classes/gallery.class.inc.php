@@ -187,7 +187,7 @@ class Gallery
 			$excludeDocs = '';
 			if (strpos($this->config['excludeDocs'], ',') !== false)
 			{
-				$excludeDocs = 'content_id NOT IN ('.',', $this->config['excludeDocs'].')';
+				$excludeDocs = 'content_id NOT IN ('.$this->config['excludeDocs'].')';
 			}
 			else
 				$excludeDocs .= 'content_id != ' . $this->config['excludeDocs'];
