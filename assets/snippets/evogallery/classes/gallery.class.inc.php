@@ -85,7 +85,7 @@ class Gallery
 		$items = '';
 
 		// Retrieve list of documents under the requested id
-		$filter = " WHERE published = '1' AND type = 'document' AND hidemenu <= '" . $this->config['ignoreHidden'] . "'";
+		$filter = " WHERE deleted = '0' AND published = '1' AND type = 'document' AND hidemenu <= '" . $this->config['ignoreHidden'] . "'";
 		if (!empty($docSelect))
 			$filter.=' AND '.$docSelect;
 	
