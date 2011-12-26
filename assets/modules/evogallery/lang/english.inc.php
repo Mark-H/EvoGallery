@@ -58,5 +58,6 @@
 
 	$_lang['mm_tab_name'] = 'Photos';
 	$_lang['mm_save_required'] = 'You must save this page before you can manage the photos associated with it.';
+	$_lang['mm_manage_images'] = 'Manage images';
 	
 ?>
