@@ -14,7 +14,7 @@ $modx->loadExtension("ManagerAPI");
 $modx->getSettings();
 
 // get module data
-$rs = $modx->db->select('properties', $modx->getFullTableName('site_modules'), 'id = '.invval($_REQUEST['id']), '', '1');
+$rs = $modx->db->select('properties', $modx->getFullTableName('site_modules'), 'id = '.intval($_REQUEST['id']), '', '1');
 if ($modx->db->getRecordCount($rs) > 0){
 	$properties = $modx->db->getValue($rs);
 }
