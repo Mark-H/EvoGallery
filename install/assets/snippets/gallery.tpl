@@ -32,6 +32,7 @@ $params['includeAssets'] = isset($includeAssets) ? intval($includeAssets) : 1;
 	// If set to 0, these will need to be included manually in the document <head>
 
 $params['picId'] = isset($picId) ? $picId : $_REQUEST['picId'];
+$params['picId'] = (int)$params['picId'];
 	// ID of specific pic to show when displaying by a single image
 
 $params['docId'] = isset($docId) ? $docId : $modx->documentIdentifier;
