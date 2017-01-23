@@ -1,18 +1,1 @@
-/*
- * EvoGallery
- *
- * Written by Brian Stanback
- * jQuery rewrite and updates by Jeff Whitfield <jeff@collabpad.com>
- * Since January 14th 2010 brought back to life by Mark Hamstra & MODx Community
- *
- * License: GNU
- *
- */
-
-EvoGallery is a photo gallery addon for MODx Evolution (1.x). 
-
-/* Installation instructions */
-1. Upload the whole package to your MODx site
-2. Make sure the assets/galleries/ folder has write permissions
-3. Run the installer (http://yoursite.com/install/) and follow on-screen instructions.
-
+[See the new EvoGallery repository here](https://github.com/extras-evolution/EvoGallery)
